@@ -1,29 +1,12 @@
-# --- シークレット ---
-# 環境変数ファイル (DBパスワードなど)
 srcs/.env
 
-# Docker secretsディレクトリ (機密情報)
-secrets/
+secrets/*
+!secrets/.gitkeep
 
-# --- データボリューム ---
-# WordPressファイルやDBデータを保存するローカルディレクトリ。
-# もしリポジトリ内に 'data/' フォルダを作成し、
-# そこをバインドマウント先にする場合。
 data/
 
-# --- OS / IDE 固有ファイル ---
-# macOS
 .DS_Store
 *.swp
 *.swo
 
-# Linux/Vim
-*~
-
-# Windows
-Thumbs.db
-desktop.ini
-
-# IDE
 .vscode/
-.idea/
