@@ -12,7 +12,7 @@ create_data_dir:
 	@mkdir -p $(DATA_PATH)/mariadb_vol
 
 up: build
-	cd srcs && docker compose up
+	cd srcs && docker compose up -d
 
 build: create_data_dir
 	cd srcs && docker compose build
