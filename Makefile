@@ -18,10 +18,9 @@ build: create_data_dir
 	cd srcs && docker compose build
 
 clean:
-	cd srcs && docker compose down
+	cd srcs && docker compose down --rmi all --volumes
 
 fclean: clean
-	docker system prune -af
 	sudo rm -rf $(DATA_PATH)
 
 re: fclean all
