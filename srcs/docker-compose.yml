@@ -27,6 +27,8 @@ services:
     build: ./requirements/nginx
     image: nginx
     container_name: nginx
+    env_file:
+      - .env
     depends_on:
       - wordpress
     ports:
@@ -47,10 +49,10 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${HOME}/data/mariadb_vol
+      device: ${DATA_PATH}/data/mariadb_vol
   wordpress_vol:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ${HOME}/data/wordpress_vol
+      device: ${DATA_PATH}/data/wordpress_vol

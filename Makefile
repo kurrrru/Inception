@@ -2,23 +2,23 @@ NAME = inception
 
 COMPOSE_FILE = ./srcs/docker-compose.yml
 
-LOGIN = nkawaguc
+LOGIN = kawaguchinagisa
 DATA_PATH = /home/$(LOGIN)/data
 
-all: build up
+all: up
 
-up:
-	@mkdir -p $(DATA_PATH)/wp
-	@mkdir -p $(DATA_PATH)/db
-	docker compose -f $(COMPOSE_FILE) up -d
+create_data_dir:
+	@mkdir -p $(DATA_PATH)/wordpress_vol
+	@mkdir -p $(DATA_PATH)/mariadb_vol
 
-build:
-	@mkdir -p $(DATA_PATH)/wp
-	@mkdir -p $(DATA_PATH)/db
-	docker compose -f $(COMPOSE_FILE) up -d --build
+up: create_data_dir
+	cd srcs && docker compose up
+
+build: create_data_dir
+	cd srcs && docker compose build
 
 clean:
-	docker compose -f $(COMPOSE_FILE) down
+	cd srcs && docker compose down
 
 fclean: clean
 	docker system prune -af
