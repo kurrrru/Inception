@@ -10,6 +10,7 @@ services:
     networks:
       - inception
     restart: always
+    init: true
   wordpress:
     build: ./requirements/wordpress
     image: wordpress:inception
@@ -23,6 +24,7 @@ services:
     networks:
       - inception
     restart: always
+    init: true
   nginx:
     build: ./requirements/nginx
     image: nginx:inception
@@ -38,6 +40,7 @@ services:
     networks:
       - inception
     restart: always
+    init: true
 
 networks:
   inception:
