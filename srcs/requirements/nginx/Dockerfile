@@ -1,4 +1,6 @@
-FROM alpine:3.20
+FROM alpine:3.24
+
+RUN apk add --no-cache nginx openssl
 
 # コンテナがすぐに終了しないように、何もしないコマンドで待機させる
 # ※注意: これはテスト用の仮置きです。課題のルールでは禁止されているハック(tail -f)なので、
