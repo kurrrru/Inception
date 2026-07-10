@@ -4,7 +4,8 @@ COMPOSE_FILE = ./srcs/docker-compose.yml
 
 LOGIN = $(shell whoami)
 DATA_PATH = /home/$(LOGIN)/data
-export DATA_PATH
+DOMAIN_NAME = $(LOGIN).42.fr
+export DATA_PATH DOMAIN_NAME
 
 all: up
 

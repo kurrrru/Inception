@@ -26,7 +26,10 @@ services:
     restart: always
     init: true
   nginx:
-    build: ./requirements/nginx
+    build:
+      context: ./requirements/nginx
+      args:
+        DOMAIN_NAME: ${DOMAIN_NAME}
     image: nginx:inception
     container_name: nginx
     env_file:
