@@ -1,0 +1,36 @@
+name: docs
+
+on: [push, pull_request]
+
+jobs:
+  markdownlint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          globs: '**/*.md'
+
+  required-sections:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: README 必須要素 (subject Chapter VI)
+        run: |
+          fail=0
+          head -n1 README.md | grep -qE '^\*.*42 curriculum.*\*$' \
+            || { echo "::error::README.md 1行目の italic 文言がありません"; fail=1; }
+          for sec in Description Instructions Resources; do
+            grep -qiE "^#+.*$sec" README.md || { echo "::error::README.md に $sec セクションがありません"; fail=1; }
+          done
+          for kw in 'Virtual Machine' 'Docker' 'Secret' 'Environment Variable' \
+                    'Docker Network' 'Host Network' 'Volume' 'Bind Mount'; do
+            grep -qi "$kw" README.md || { echo "::error::README.md に比較項目「$kw」がありません"; fail=1; }
+          done
+          exit $fail
+      - name: USER_DOC / DEV_DOC が空でないか (subject Chapter VII)
+        run: |
+          fail=0
+          test -s USER_DOC.md || { echo "::error::USER_DOC.md が空です"; fail=1; }
+          test -s DEV_DOC.md  || { echo "::error::DEV_DOC.md が空です"; fail=1; }
+          exit $fail
