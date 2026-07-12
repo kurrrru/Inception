@@ -1,6 +1,6 @@
 FROM alpine:3.23
 
-# コンテナがすぐに終了しないように、何もしないコマンドで待機させる
-# ※注意: これはテスト用の仮置きです。課題のルールでは禁止されているハック(tail -f)なので、
-# 本実装の際には必ず削除して正規のサービス起動コマンドに書き換える必要があります。
+RUN apk add --no-cache mariadb mariadb-client
+
+# ↓ 仮置き。Step 4 で entrypoint スクリプト経由の起動に置き換える
 CMD ["tail", "-f", "/dev/null"]

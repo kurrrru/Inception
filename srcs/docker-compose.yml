@@ -5,6 +5,9 @@ services:
     container_name: mariadb
     env_file:
       - .env
+    secrets:
+      - db_password
+      - db_root_password
     volumes:
       - mariadb_vol:/var/lib/mysql
     networks:
@@ -62,5 +65,11 @@ volumes:
       type: none
       o: bind
       device: ${DATA_PATH}/wordpress_vol
+
+secrets:
+  db_password:
+    file: ../secrets/db_password.txt
+  db_root_password:
+    file: ../secrets/db_root_password.txt
 
 # DATA_PATHは /home/$(whoami)/data という想定
