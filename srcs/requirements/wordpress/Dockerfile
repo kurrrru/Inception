@@ -11,5 +11,16 @@ RUN apk add --no-cache \
         php83-phar curl tar mariadb-client && \
     ln -sf /usr/bin/php83 /usr/bin/php
 
+# WordPress CLIをインストールする
+# 参照: https://make.wordpress.org/cli/handbook/guides/installing/
+RUN curl -fsSL -o /usr/local/bin/wp \
+        https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x /usr/local/bin/wp
+
+# WordPressのコアファイルをダウンロードする
+# 参照: https://developer.wordpress.org/cli/commands/core/download/
+RUN mkdir -p /usr/src/wordpress && \
+    php -d memory_limit=-1 /usr/local/bin/wp --allow-root core download --path=/usr/src/wordpress
+
 # ↓ 仮置き。後で置き換える
 CMD ["tail", "-f", "/dev/null"]
