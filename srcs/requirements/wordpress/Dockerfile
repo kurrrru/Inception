@@ -22,5 +22,8 @@ RUN curl -fsSL -o /usr/local/bin/wp \
 RUN mkdir -p /usr/src/wordpress && \
     php -d memory_limit=-1 /usr/local/bin/wp --allow-root core download --path=/usr/src/wordpress
 
+# 別コンテナのnginxから接続できるよう、php-fpmのlisten先をloopback限定から全interfaceに変更
+RUN sed -i 's/^listen = 127.0.0.1:9000$/listen = 9000/' /etc/php83/php-fpm.d/www.conf
+
 # ↓ 仮置き。後で置き換える
 CMD ["tail", "-f", "/dev/null"]
