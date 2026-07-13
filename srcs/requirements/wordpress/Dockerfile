@@ -29,5 +29,4 @@ RUN sed -i 's/^listen = 127.0.0.1:9000$/listen = 9000/' /etc/php83/php-fpm.d/www
 COPY tools/entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-# ↓ 仮置き。後で置き換える
-CMD ["tail", "-f", "/dev/null"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

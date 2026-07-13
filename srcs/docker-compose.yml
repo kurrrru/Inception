@@ -20,6 +20,8 @@ services:
     container_name: wordpress
     env_file:
       - .env
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
     secrets:
       - db_password
       - wp_admin_password

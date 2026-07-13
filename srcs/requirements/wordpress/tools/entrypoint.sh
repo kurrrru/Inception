@@ -51,3 +51,6 @@ if [ ! -f /var/www/html/wp-load.php ]; then
 else
     echo "[entrypoint] WordPress already present, skipping copy."
 fi
+
+echo "[entrypoint] Starting php-fpm (foreground)..."
+exec php-fpm83 -F
