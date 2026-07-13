@@ -20,6 +20,12 @@ services:
     container_name: wordpress
     env_file:
       - .env
+    environment:
+      - DOMAIN_NAME=${DOMAIN_NAME}
+    secrets:
+      - db_password
+      - wp_admin_password
+      - wp_user_password
     volumes:
       - wordpress_vol:/var/www/html
     depends_on:
@@ -71,5 +77,9 @@ secrets:
     file: ../secrets/db_password.txt
   db_root_password:
     file: ../secrets/db_root_password.txt
+  wp_admin_password:
+    file: ../secrets/wp_admin_password.txt
+  wp_user_password:
+    file: ../secrets/wp_user_password.txt
 
 # DATA_PATHは /home/$(whoami)/data という想定

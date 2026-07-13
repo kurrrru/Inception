@@ -9,17 +9,25 @@ jobs:
       - uses: actions/checkout@v4
       - name: .env を用意
         run: |
-          # 実装が進んだら実際に必要な変数(DB/WP 認証情報など)へ更新する
           cat > srcs/.env <<'EOF'
-          DOMAIN_NAME=login.42.fr
-          DATA_PATH=/home/runner/data
+          MYSQL_DATABASE=wordpress
+          MYSQL_USER=wp_user
+          WP_TITLE=Inception
+          WORDPRESS_DB_HOST=mariadb
+          WORDPRESS_DB_NAME=wordpress
+          WORDPRESS_DB_USER=wp_user
+          WP_ADMIN_USER=capitaine
+          WP_ADMIN_EMAIL=capitaine@example.com
+          WP_USER=author
+          WP_USER_EMAIL=author@example.com
           EOF
-      - name: secrets を用意 (Docker secrets を配線したら使用)
+      - name: secrets を用意
         run: |
           mkdir -p secrets
-          echo "ci-db-password"       > secrets/db_password.txt
-          echo "ci-db-root-password"  > secrets/db_root_password.txt
-          echo "ci-wp-admin-password" > secrets/credentials.txt
+          echo -n "ci-db-password"       > secrets/db_password.txt
+          echo -n "ci-db-root-password"  > secrets/db_root_password.txt
+          echo -n "ci-wp-admin-password" > secrets/wp_admin_password.txt
+          echo -n "ci-wp-user-password"  > secrets/wp_user_password.txt
       - name: ビルド & 起動
         run: make
       - name: コンテナ状態
