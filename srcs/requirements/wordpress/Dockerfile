@@ -25,5 +25,9 @@ RUN mkdir -p /usr/src/wordpress && \
 # 別コンテナのnginxから接続できるよう、php-fpmのlisten先をloopback限定から全interfaceに変更
 RUN sed -i 's/^listen = 127.0.0.1:9000$/listen = 9000/' /etc/php83/php-fpm.d/www.conf
 
+# entrypoint.shをコピーして実行権限を付与する
+COPY tools/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # ↓ 仮置き。後で置き換える
 CMD ["tail", "-f", "/dev/null"]
