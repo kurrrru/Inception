@@ -1,5 +1,7 @@
 FROM alpine:3.23
 
+ARG DOMAIN_NAME
+
 RUN apk add --no-cache nginx openssl
 
 RUN mkdir -p /etc/nginx/ssl && \
