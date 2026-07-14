@@ -7,7 +7,11 @@ DATA_PATH = /home/$(LOGIN)/data
 DOMAIN_NAME = $(LOGIN).42.fr
 export DATA_PATH DOMAIN_NAME
 
-all: up
+all: up hosts
+
+hosts:
+	grep -q "$(DOMAIN_NAME)" /etc/hosts || \
+		echo "127.0.0.1 $(DOMAIN_NAME)" | sudo tee -a /etc/hosts
 
 create_data_dir:
 	mkdir -p $(DATA_PATH)/wordpress_vol
@@ -27,4 +31,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all up build clean fclean re create_data_dir
+.PHONY: all up build clean fclean re create_data_dir hosts
