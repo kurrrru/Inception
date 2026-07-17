@@ -11,7 +11,7 @@
 [![compose-validate](https://github.com/kurrrru/Inception/actions/workflows/compose-validate.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/compose-validate.yml)
 
 ## 概要
-Inceptionは、システム管理に関する知識を深めることを目的としたプロジェクトで、Dockerを用いてWebインフラを構築するプロジェクトである。
+Inceptionは、Dockerを用いてWebインフラを構築し、システム管理に関する知識を深めることを目的としたプロジェクトである。
 必須構成として、Docker Composeでnginx・WordPress・MariaDBの3コンテナを連携させ、WordPressサイトをホストする。bonusとして追加したサービスについては、「ボーナス」セクションに記載する。
 
 - **nginx**: TLSv1.2/1.3のみでHTTPS(443番)を受け付ける唯一の外部入口
