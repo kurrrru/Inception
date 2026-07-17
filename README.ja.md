@@ -7,16 +7,16 @@
 [![dockerfile-lint](https://github.com/kurrrru/Inception/actions/workflows/dockerfile-lint.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/dockerfile-lint.yml)
 [![secret-scan](https://github.com/kurrrru/Inception/actions/workflows/secret-scan.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/secret-scan.yml)
 [![final-newline](https://github.com/kurrrru/Inception/actions/workflows/final-newline.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/final-newline.yml)
-[![forbidden-patterns](https://github.com/kurrrru/Inception/actions/workflows/forbidden-partterns.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/forbidden-patterns.yml)
+[![forbidden-patterns](https://github.com/kurrrru/Inception/actions/workflows/forbidden-patterns.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/forbidden-patterns.yml)
 [![compose-validate](https://github.com/kurrrru/Inception/actions/workflows/compose-validate.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/compose-validate.yml)
 
 ## 概要
 Inceptionは、システム管理に関する知識を深めることを目的としたプロジェクトで、Dockerを用いてWebインフラを構築するプロジェクトである。
-必須構成として、Docker Composeで以下のコンテナを連携させ、WordPressサイトをホストする。bonusとして追加したサービスについては、「ボーナス」セクションに記載する。
+必須構成として、Docker Composeでnginx・WordPress・MariaDBの3コンテナを連携させ、WordPressサイトをホストする。bonusとして追加したサービスについては、「ボーナス」セクションに記載する。
 
 - **nginx**: TLSv1.2/1.3のみでHTTPS(443番)を受け付ける唯一の外部入口
-- **wordpress**: PHP-FPMでWordPress本体を実行するコンテナ
-- **mariadb**: WordPress用のデータベースを保持するコンテナ
+- **WordPress**: PHP-FPMでWordPress本体を実行するコンテナ
+- **MariaDB**: WordPress用のデータベースを保持するコンテナ
 
 
 ### Dockerの使い方と含まれるソース
@@ -26,8 +26,7 @@ Inceptionは、システム管理に関する知識を深めることを目的�
 
 ### 主な設計判断
 - **冪等性**: 初期化や設定変更を伴う処理は、何度実行しても安全であるように設計している。
-- **コンテナの寿命 = サービス本体の寿命**: コンテナを生かし続けるための延命策(ダミープロセス等)を避け、サービス本体プロセスの
-  生死とコンテナの生死が一致するように設計している。
+- **コンテナの寿命 = サービス本体の寿命**: コンテナを生かし続けるための延命策(ダミープロセス等)を避け、サービス本体プロセスの生死とコンテナの生死が一致するように設計している。
 - **露出の最小化**: 準備が完了していない状態を、外部からアクセス可能にしない。
 - **決め打ちを避ける**: 環境やユーザー固有の値をハードコードせず、実行時・ビルド時に導出する設計にしている。
 
