@@ -2,8 +2,6 @@
 
 # Inception
 
-# Inception
-
 [![stack](https://github.com/kurrrru/Inception/actions/workflows/stack.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/stack.yml)
 [![docs](https://github.com/kurrrru/Inception/actions/workflows/docs.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/docs.yml)
 [![dockerfile-lint](https://github.com/kurrrru/Inception/actions/workflows/dockerfile-lint.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/dockerfile-lint.yml)
