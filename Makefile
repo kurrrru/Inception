@@ -20,6 +20,9 @@ create_data_dir:
 up: build
 	docker compose -f $(COMPOSE_FILE) up -d
 
+down:
+	docker compose -f $(COMPOSE_FILE) down
+
 build: create_data_dir
 	docker compose -f $(COMPOSE_FILE) build
 
@@ -31,4 +34,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all up build clean fclean re create_data_dir hosts
+.PHONY: all up down build clean fclean re create_data_dir hosts
