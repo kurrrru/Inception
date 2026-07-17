@@ -64,6 +64,8 @@ make            # ビルド + 起動(mandatoryのみ)
 make hosts      # /etc/hosts にドメインを追記(要sudo)
 ```
 
+VM内のブラウザで `https://<login>.42.fr` を開く。
+
 ## 参考資料
 - Alpine Linux Wiki: MariaDB — https://wiki.alpinelinux.org/wiki/MariaDB
 - WP-CLI Installing guide — https://make.wordpress.org/cli/handbook/guides/installing/
