@@ -7,7 +7,7 @@
 [![dockerfile-lint](https://github.com/kurrrru/Inception/actions/workflows/dockerfile-lint.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/dockerfile-lint.yml)
 [![secret-scan](https://github.com/kurrrru/Inception/actions/workflows/secret-scan.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/secret-scan.yml)
 [![final-newline](https://github.com/kurrrru/Inception/actions/workflows/final-newline.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/final-newline.yml)
-[![forbidden-patterns](https://github.com/kurrrru/Inception/actions/workflows/forbidden-partterns.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/forbidden-partterns.yml)
+[![forbidden-patterns](https://github.com/kurrrru/Inception/actions/workflows/forbidden-partterns.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/forbidden-patterns.yml)
 [![compose-validate](https://github.com/kurrrru/Inception/actions/workflows/compose-validate.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/compose-validate.yml)
 
 ## Description
