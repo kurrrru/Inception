@@ -2,6 +2,16 @@
 
 # Inception
 
+# Inception
+
+[![stack](https://github.com/kurrrru/Inception/actions/workflows/stack.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/stack.yml)
+[![docs](https://github.com/kurrrru/Inception/actions/workflows/docs.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/docs.yml)
+[![dockerfile-lint](https://github.com/kurrrru/Inception/actions/workflows/dockerfile-lint.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/dockerfile-lint.yml)
+[![secret-scan](https://github.com/kurrrru/Inception/actions/workflows/secret-scan.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/secret-scan.yml)
+[![final-newline](https://github.com/kurrrru/Inception/actions/workflows/final-newline.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/final-newline.yml)
+[![forbidden-patterns](https://github.com/kurrrru/Inception/actions/workflows/forbidden-partterns.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/forbidden-partterns.yml)
+[![compose-validate](https://github.com/kurrrru/Inception/actions/workflows/compose-validate.yml/badge.svg)](https://github.com/kurrrru/Inception/actions/workflows/compose-validate.yml)
+
 ## 概要
 Inceptionは、システム管理に関する知識を深めることを目的としたプロジェクトで、Dockerを用いてWebインフラを構築するプロジェクトである。
 必須構成として、Docker Composeで以下のコンテナを連携させ、WordPressサイトをホストする。bonusとして追加したサービスについては、「ボーナス」セクションに記載する。
