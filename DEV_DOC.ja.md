@@ -20,7 +20,7 @@ WORDPRESS_DB_USER=wp_user
 WP_ADMIN_USER=<管理者のユーザー名>
 WP_ADMIN_EMAIL=<管理者のメールアドレス>
 WP_USER=<一般ユーザのユーザー名>
-WP_USER_EMAIL=<一般ユーザのユーザー名>
+WP_USER_EMAIL=<一般ユーザのメールアドレス>
 ```
 `DOMAIN_NAME`と`DATA_PATH`はMakefileが`whoami`から自動算出するため、`.env`には書かない。
 
@@ -36,6 +36,7 @@ WP_USER_EMAIL=<一般ユーザのユーザー名>
 
 ```bash
 make          # create_data_dir → build → up(mandatoryのみ起動)
+make down     # コンテナを停止(イメージ・ボリューム・データは残す)
 make clean    # コンテナ・イメージ・ボリューム定義を削除
 make fclean   # clean + ホスト上の実データ(/home/<login>/data)も削除
 make re       # fclean + all
