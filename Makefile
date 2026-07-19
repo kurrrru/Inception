@@ -20,7 +20,7 @@ create_data_dir:
 up: build
 	docker compose -f $(COMPOSE_FILE) up -d
 
-bonus: build_bonus
+bonus: build_bonus hosts
 	USE_REDIS=1 docker compose -f $(COMPOSE_FILE) --profile bonus up -d
 
 down:
