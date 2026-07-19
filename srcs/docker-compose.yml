@@ -26,7 +26,7 @@ services:
       - .env
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
-      - USE_REDIS=${USE_REDIS}
+      - USE_REDIS=${USE_REDIS:-0}
     secrets:
       - db_password
       - wp_admin_password
