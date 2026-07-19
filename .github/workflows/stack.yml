@@ -28,6 +28,7 @@ jobs:
           echo -n "ci-db-root-password"  > secrets/db_root_password.txt
           echo -n "ci-wp-admin-password" > secrets/wp_admin_password.txt
           echo -n "ci-wp-user-password"  > secrets/wp_user_password.txt
+          echo -n "ci-redis-password"    > secrets/redis_password.txt
       - name: ビルド & 起動
         run: make
       - name: コンテナ状態
