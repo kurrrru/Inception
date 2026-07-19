@@ -1,5 +1,12 @@
+x-common: &common
+  restart: always
+  init: true
+  networks: 
+    - inception
+
 services:
   mariadb:
+    <<: *common
     build: ./requirements/mariadb
     image: mariadb:inception
     container_name: mariadb
@@ -10,11 +17,8 @@ services:
       - db_root_password
     volumes:
       - mariadb_vol:/var/lib/mysql
-    networks:
-      - inception
-    restart: always
-    init: true
   wordpress:
+    <<: *common
     build: ./requirements/wordpress
     image: wordpress:inception
     container_name: wordpress
@@ -22,19 +26,18 @@ services:
       - .env
     environment:
       - DOMAIN_NAME=${DOMAIN_NAME}
+      - USE_REDIS=${USE_REDIS}
     secrets:
       - db_password
       - wp_admin_password
       - wp_user_password
+      - redis_password
     volumes:
       - wordpress_vol:/var/www/html
     depends_on:
       - mariadb
-    networks:
-      - inception
-    restart: always
-    init: true
   nginx:
+    <<: *common
     build:
       context: ./requirements/nginx
       args:
@@ -49,21 +52,14 @@ services:
       - "443:443"
     volumes:
       - wordpress_vol:/var/www/html
-    networks:
-      - inception
-    restart: always
-    init: true
   redis:
+    <<: *common
     profiles: [bonus]
     build: ./requirements/bonus/redis
     image: redis:inception
     container_name: redis
     secrets:
       - redis_password
-    networks:
-      - inception
-    restart: always
-    init: true
 
 networks:
   inception:
