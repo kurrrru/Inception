@@ -20,18 +20,24 @@ create_data_dir:
 up: build
 	docker compose -f $(COMPOSE_FILE) up -d
 
+bonus: build_bonus
+	USE_REDIS=1 docker compose -f $(COMPOSE_FILE) --profile bonus up -d
+
 down:
-	docker compose -f $(COMPOSE_FILE) down
+	docker compose -f $(COMPOSE_FILE) --profile bonus down
 
 build: create_data_dir
 	docker compose -f $(COMPOSE_FILE) build
 
+build_bonus: create_data_dir
+	docker compose -f $(COMPOSE_FILE) --profile bonus build
+
 clean:
-	docker compose -f $(COMPOSE_FILE) down --rmi all --volumes
+	docker compose -f $(COMPOSE_FILE) --profile bonus down --rmi all --volumes
 
 fclean: clean
 	sudo rm -rf $(DATA_PATH)
 
 re: fclean all
 
-.PHONY: all up down build clean fclean re create_data_dir hosts
+.PHONY: all up down build build_bonus clean fclean re create_data_dir hosts bonus
