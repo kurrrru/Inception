@@ -1,6 +1,7 @@
 FROM alpine:3.23
 
 ARG DOMAIN_NAME
+ARG NGINX_CONF=nginx.conf
 
 RUN apk add --no-cache nginx openssl
 
@@ -11,6 +12,6 @@ RUN mkdir -p /etc/nginx/ssl && \
         -out /etc/nginx/ssl/inception.crt \
         -subj "/C=JP/ST=Tokyo/L=Tokyo/O=42/OU=42/CN=${DOMAIN_NAME}"
 
-COPY conf/nginx.conf /etc/nginx/nginx.conf
+COPY conf/${NGINX_CONF} /etc/nginx/nginx.conf
 
 CMD ["nginx", "-g", "daemon off;"]
