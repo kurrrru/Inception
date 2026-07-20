@@ -1,6 +1,7 @@
 NAME = inception
 
 COMPOSE_FILE = ./srcs/docker-compose.yml
+COMPOSE_FILE_BONUS = ./srcs/docker-compose.bonus.yml
 
 LOGIN = $(shell whoami)
 DATA_PATH = /home/$(LOGIN)/data
@@ -21,19 +22,19 @@ up: build
 	docker compose -f $(COMPOSE_FILE) up -d
 
 bonus: build_bonus hosts
-	USE_REDIS=1 docker compose -f $(COMPOSE_FILE) --profile bonus up -d
+	USE_REDIS=1 docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_FILE_BONUS) up -d
 
 down:
-	docker compose -f $(COMPOSE_FILE) --profile bonus down
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_FILE_BONUS) down
 
 build: create_data_dir
 	docker compose -f $(COMPOSE_FILE) build
 
 build_bonus: create_data_dir
-	docker compose -f $(COMPOSE_FILE) --profile bonus build
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_FILE_BONUS) build
 
 clean:
-	docker compose -f $(COMPOSE_FILE) --profile bonus down --rmi all --volumes
+	docker compose -f $(COMPOSE_FILE) -f $(COMPOSE_FILE_BONUS) down --rmi all --volumes
 
 fclean: clean
 	sudo rm -rf $(DATA_PATH)
