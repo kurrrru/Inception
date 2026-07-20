@@ -1,0 +1,27 @@
+x-common: &common
+  restart: always
+  init: true
+  networks:
+    - inception
+
+services:
+  nginx:
+    build:
+      args:
+        NGINX_CONF: nginx.bonus.conf
+    ports:
+      - "8443:8443"
+  redis:
+    <<: *common
+    build: ./requirements/bonus/redis
+    image: redis:inception
+    container_name: redis
+    secrets:
+      - redis_password
+  adminer:
+    <<: *common
+    build: ./requirements/bonus/adminer
+    image: adminer:inception
+    container_name: adminer
+    depends_on:
+      - mariadb
