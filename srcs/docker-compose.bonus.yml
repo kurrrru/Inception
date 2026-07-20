@@ -32,3 +32,6 @@ services:
     container_name: ftp-server
     volumes:
       - wordpress_vol:/var/www/html
+    ports:
+      - "21:21"
+      - "30000-30009:30000-30009"
