@@ -25,3 +25,10 @@ services:
     container_name: adminer
     depends_on:
       - mariadb
+  ftp-server:
+    <<: *common
+    build: ./requirements/bonus/ftp-server
+    image: ftp-server:inception
+    container_name: ftp-server
+    volumes:
+      - wordpress_vol:/var/www/html
