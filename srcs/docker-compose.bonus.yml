@@ -40,4 +40,4 @@ services:
 
 secrets:
   ftp_password:
-    file: ./secrets/ftp_password.txt
+    file: ../secrets/ftp_password.txt
