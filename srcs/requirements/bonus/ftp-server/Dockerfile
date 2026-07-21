@@ -9,6 +9,12 @@ RUN mkdir -p /etc/vsftpd/ssl && \
         -out /etc/vsftpd/ssl/ftp.crt \
         -subj "/C=JP/ST=Tokyo/L=Tokyo/O=42/OU=42/CN=ftp"
 
-COPY ./conf/vsftpd.conf /etc/vsftpd/vsftpd.conf
+RUN adduser -D -H -h /var/www/html -s /bin/sh ftp_user && \
+    sed -i 's/^ftp_user:x:[0-9]*:[0-9]*:/ftp_user:x:65534:65534:/' /etc/passwd
 
-CMD ["vsftpd", "/etc/vsftpd/vsftpd.conf"]
+COPY ./conf/vsftpd.conf /etc/vsftpd/vsftpd.conf
+COPY ./tools/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY ./conf/pam.d/vsftpd /etc/pam.d/vsftpd
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

@@ -35,3 +35,9 @@ services:
     ports:
       - "21:21"
       - "30000-30009:30000-30009"
+    secrets:
+      - ftp_password
+
+secrets:
+  ftp_password:
+    file: ./secrets/ftp_password.txt
