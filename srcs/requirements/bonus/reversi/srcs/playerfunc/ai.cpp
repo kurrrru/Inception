@@ -183,6 +183,10 @@ static int evaluate(const Board& board, Board::Player maximizing) {
         POSITIONAL_WEIGHT = 10;
         MOBILITY_WEIGHT = 75;
         CORNER_WEIGHT = 800;
+    } else { // 終盤
+        POSITIONAL_WEIGHT = 10;
+        MOBILITY_WEIGHT = 50;
+        CORNER_WEIGHT = 1000;
     }
 
     int finalScore = (POSITIONAL_WEIGHT * positionalScore) +
