@@ -1,9 +1,6 @@
-#include <src/Board.hpp>
+#include "Board.hpp"
 
-#include <iostream>
-#include <iomanip>
 #include <stdexcept>
-#include <string>
 #include <vector>
 
 Board::Board() : _blackCount(2), _whiteCount(2) {
@@ -29,44 +26,8 @@ Board& Board::operator=(const Board& other) {
 
 Board::~Board() {}
 
-Board::Board(const std::vector<std::string>& board) : _blackCount(0), _whiteCount(0) {
-    if (!setBoard(board)) {
-        throw std::invalid_argument("Invalid board configuration");
-    }
-}
-
 Board::Player Board::opponent(Player player) {
     return (player == Player::BLACK) ? Player::WHITE : Player::BLACK;
-}
-
-bool Board::setBoard(const std::vector<std::string>& board) {
-    if (board.size() != static_cast<std::size_t>(_height)) {
-        return false;
-    }
-    int blackCount = 0;
-    int whiteCount = 0;
-    std::vector<std::vector<char>> newBoard(_height, std::vector<char>(_width, _emptyCell));
-    for (int r = 0; r < _height; ++r) {
-        if (board[r].size() != static_cast<std::size_t>(_width)) {
-            return false;
-        }
-        for (int c = 0; c < _width; ++c) {
-            char cell = board[r][c];
-            if (cell == _blackCell) {
-                ++blackCount;
-            } else if (cell == _whiteCell) {
-                ++whiteCount;
-            } else if (cell != _emptyCell) {
-                return false;
-            }
-            newBoard[r][c] = cell;
-        }
-    }
-    std::swap(_board, newBoard);
-    _history = std::deque<std::vector<std::tuple<int, int, char>>>();
-    _blackCount = blackCount;
-    _whiteCount = whiteCount;
-    return true;
 }
 
 bool Board::isValidMove(int row, int col, Player player) const {
@@ -154,30 +115,6 @@ bool Board::placePiece(int row, int col, Player player) {
     return true;
 }
 
-void Board::printBoard() const {
-    std::cout << " ";
-    for (int c = 0; c < _width; ++c) {
-        std::cout << " " << static_cast<char>('A' + c);
-    }
-    std::cout << "\n";
-    for (int r = 0; r < _height; ++r) {
-        std::cout << r + 1;
-        for (int c = 0; c < _width; ++c) {
-            std::cout << " " << _board[r][c];
-        }
-        std::cout << "\n";
-    }
-    std::cout << "Black (x): " << _blackCount << "  White (o): " << _whiteCount << std::endl;
-}
-
-void Board::printHistory() const {
-    std::cout << "Move History (most recent last):\n";
-    for (const auto& changes : _history) {
-        std::cout << 'a' + std::get<1>(changes[0]) << (std::get<0>(changes[0]) + 1);
-    }
-    std::cout << std::endl;
-}
-
 int Board::getBlackCount() const {
     return _blackCount;
 }
@@ -190,25 +127,11 @@ int Board::getTotalCount() const {
     return _blackCount + _whiteCount;
 }
 
-bool Board::operator==(const Board& other) const {
-    return _board == other._board;
-}
-
 char Board::getCell(int row, int col) const {
     if (row < 0 || row >= _height || col < 0 || col >= _width) {
         throw std::out_of_range("Cell position out of range");
     }
     return _board[row][col];
-}
-
-std::string Board::toString() const {
-    std::string result;
-    for (int r = 0; r < _height; ++r) {
-        for (int c = 0; c < _width; ++c) {
-            result += _board[r][c];
-        }
-    }
-    return result;
 }
 
 void Board::undo() {

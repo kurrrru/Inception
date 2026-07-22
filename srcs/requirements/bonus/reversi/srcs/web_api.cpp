@@ -1,5 +1,5 @@
-#include <src/Board.hpp>
-#include <src/playerfunc/playerfunc.hpp>
+#include "Board.hpp"
+#include "playerfunc/playerfunc.hpp"
 
 namespace {
     Board g_board;
