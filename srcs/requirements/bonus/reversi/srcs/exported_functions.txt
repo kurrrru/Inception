@@ -1,0 +1,13 @@
+_web_reset
+_web_get_cell
+_web_get_current_player
+_web_get_human_player
+_web_is_game_over
+_web_get_black_count
+_web_get_white_count
+_web_has_any_move
+_web_is_valid_move
+_web_human_move
+_web_human_pass
+_web_ai_move
+_web_get_winner
