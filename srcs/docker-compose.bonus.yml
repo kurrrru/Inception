@@ -37,6 +37,11 @@ services:
       - "30000-30009:30000-30009"
     secrets:
       - ftp_password
+  reversi:
+    <<: *common
+    build: ./requirements/bonus/reversi
+    image: reversi:inception
+    container_name: reversi
 
 secrets:
   ftp_password:
