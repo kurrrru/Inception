@@ -43,6 +43,13 @@ services:
     build: ./requirements/bonus/reversi
     image: reversi:inception
     container_name: reversi
+  watcher:
+    <<: *common
+    build: ./requirements/bonus/watcher
+    image: watcher:inception
+    container_name: watcher
+    ports:
+      - "8082:8082"
 
 secrets:
   ftp_password:
