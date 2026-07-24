@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="refresh" content="5">
+    <title>{{.Title}}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>{{.Title}}</h1>
+    <div class="grid">
+        {{range .Results}}
+        <div class="card {{if .Up}}up{{else}}down{{end}}">
+            <h2>{{.Name}}</h2>
+            <p>{{if .Up}}稼働中{{else}}停止中{{end}}</p>
+            {{range .Details}}
+            <p class="detail">{{.Label}}: {{.Value}}</p>
+            {{end}}
+        </div>
+        {{end}}
+    </div>
+</body>
+</html>

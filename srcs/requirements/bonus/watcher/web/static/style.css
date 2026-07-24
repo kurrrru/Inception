@@ -1,0 +1,26 @@
+body {
+    font-family: sans-serif;
+    background: #111;
+    color: #eee;
+    margin: 2rem;
+}
+.grid {
+    display: grid;
+    gap: 1rem;
+}
+.card {
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 1rem;
+    background: #1a1a1a;
+}
+.card.up {
+    border-left: 4px solid #4caf50;
+}
+.card.down {
+    border-left: 4px solid #e53935;
+}
+.detail {
+    font-size: 0.85rem;
+    color: #999;
+}

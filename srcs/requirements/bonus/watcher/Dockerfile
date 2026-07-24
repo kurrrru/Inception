@@ -5,6 +5,7 @@ RUN apk add --no-cache go
 WORKDIR /app
 COPY go.mod ./
 COPY cmd/ ./cmd/
+COPY internal/ ./internal/
 RUN CGO_ENABLED=0 go build -o watcher ./cmd/watcher
 
 FROM alpine:3.23
@@ -19,5 +20,7 @@ RUN mkdir -p /etc/watcher/ssl && \
         -subj "/C=JP/ST=Tokyo/L=Tokyo/O=42/OU=42/CN=watcher"
 
 COPY --from=builder /app/watcher /usr/local/bin/watcher
+COPY web/ /app/web/
+WORKDIR /app
 
 CMD ["watcher"]
