@@ -23,6 +23,9 @@ body {
 .card.down {
     border-left: 4px solid #e53935;
 }
+.card.unknown {
+    border-left: 4px solid #757575;
+}
 .detail {
     font-size: 0.85rem;
     color: #999;

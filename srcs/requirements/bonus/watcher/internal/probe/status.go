@@ -1,11 +1,12 @@
 package probe
 
-type Status int
+type Status string
 
 const (
-	Healthy Status = iota
-	Unhealthy
-	Down
+	Healthy   Status = "healthy"
+	Unhealthy Status = "unhealthy"
+	Down      Status = "down"
+	Unknown   Status = "unknown"
 )
 
 func (s Status) Label() string {
@@ -23,12 +24,8 @@ func (s Status) Label() string {
 
 func (s Status) CSSClass() string {
 	switch s {
-	case Healthy:
-		return "healthy"
-	case Unhealthy:
-		return "unhealthy"
-	case Down:
-		return "down"
+	case Healthy, Unhealthy, Down:
+		return string(s)
 	default:
 		return "unknown"
 	}

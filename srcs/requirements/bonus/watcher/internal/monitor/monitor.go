@@ -15,6 +15,8 @@ type Target struct {
 // severity はステータスの深刻さを表す。値が大きいほど深刻。
 func severity(s probe.Status) int {
 	switch s {
+	case probe.Unknown:
+		return 3
 	case probe.Down:
 		return 2
 	case probe.Unhealthy:
@@ -22,7 +24,7 @@ func severity(s probe.Status) int {
 	case probe.Healthy:
 		return 0
 	default:
-		return 3 // 不明(Unknown) は最も深刻として扱う
+		return 3 // ゼロ値や想定外の文字列も不明として扱う
 	}
 }
 
