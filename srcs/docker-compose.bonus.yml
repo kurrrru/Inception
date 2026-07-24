@@ -28,7 +28,10 @@ services:
       - mariadb
   ftp-server:
     <<: *common
-    build: ./requirements/bonus/ftp-server
+    build:
+      context: ./requirements/bonus/ftp-server
+      args:
+        DOMAIN_NAME: ${DOMAIN_NAME}
     image: ftp-server:inception
     container_name: ftp-server
     volumes:
@@ -45,7 +48,10 @@ services:
     container_name: reversi
   watcher:
     <<: *common
-    build: ./requirements/bonus/watcher
+    build:
+      context: ./requirements/bonus/watcher
+      args:
+        DOMAIN_NAME: ${DOMAIN_NAME}
     image: watcher:inception
     container_name: watcher
     ports:
