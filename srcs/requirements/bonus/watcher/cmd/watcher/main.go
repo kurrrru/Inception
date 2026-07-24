@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/tls"
 	"log"
 	"net/http"
 	"time"
@@ -20,5 +21,10 @@ func main() {
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	log.Println("listening on :8082 (TLS)")
-	log.Fatal(http.ListenAndServeTLS(":8082", "/etc/watcher/ssl/watcher.crt", "/etc/watcher/ssl/watcher.key", nil))
+	srv := &http.Server{
+		Addr:      ":8082",
+		Handler:   nil,
+		TLSConfig: &tls.Config{MinVersion: tls.VersionTLS12},
+	}
+	log.Fatal(srv.ListenAndServeTLS("/etc/watcher/ssl/watcher.crt", "/etc/watcher/ssl/watcher.key"))
 }
