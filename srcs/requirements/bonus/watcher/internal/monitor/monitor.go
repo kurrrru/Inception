@@ -12,17 +12,31 @@ type Target struct {
 	Checkers []probe.Checker
 }
 
+// severity はステータスの深刻さを表す。値が大きいほど深刻。
+func severity(s probe.Status) int {
+	switch s {
+	case probe.Down:
+		return 2
+	case probe.Unhealthy:
+		return 1
+	case probe.Healthy:
+		return 0
+	default:
+		return 3 // 不明(Unknown) は最も深刻として扱う
+	}
+}
+
 func (t Target) Check() probe.Result {
-	overallUp := true
+	overall := probe.Healthy
 	var details []probe.Detail
 	for _, c := range t.Checkers {
 		r := c.Check()
-		if !r.Up {
-			overallUp = false
+		if severity(r.Status) > severity(overall) {
+			overall = r.Status
 		}
 		details = append(details, r.Details...)
 	}
-	return probe.Result{Name: t.Name, Up: overallUp, Details: details}
+	return probe.Result{Name: t.Name, Status: overall, Details: details}
 }
 
 type Store struct {

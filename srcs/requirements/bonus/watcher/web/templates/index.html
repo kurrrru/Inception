@@ -10,9 +10,9 @@
     <h1>{{.Title}}</h1>
     <div class="grid">
         {{range .Results}}
-        <div class="card {{if .Up}}up{{else}}down{{end}}">
+        <div class="card {{.Status.CSSClass}}">
             <h2>{{.Name}}</h2>
-            <p>{{if .Up}}稼働中{{else}}停止中{{end}}</p>
+            <p>{{.Status.Label}}</p>
             {{range .Details}}
             <p class="detail">{{.Label}}: {{.Value}}</p>
             {{end}}

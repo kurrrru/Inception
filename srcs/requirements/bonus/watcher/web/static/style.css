@@ -14,8 +14,11 @@ body {
     padding: 1rem;
     background: #1a1a1a;
 }
-.card.up {
+.card.healthy {
     border-left: 4px solid #4caf50;
+}
+.card.unhealthy {
+    border-left: 4px solid #ff9800;
 }
 .card.down {
     border-left: 4px solid #e53935;

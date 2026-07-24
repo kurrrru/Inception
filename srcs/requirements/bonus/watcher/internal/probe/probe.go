@@ -14,7 +14,7 @@ type Detail struct {
 
 type Result struct {
 	Name    string
-	Up      bool
+	Status  Status
 	Details []Detail
 }
 
@@ -33,12 +33,12 @@ func (c TCPChecker) Check() Result {
 	conn, err := net.DialTimeout("tcp", c.Addr, c.Timeout)
 	latency := time.Since(start)
 	if err != nil {
-		return Result{Name: c.Name, Up: false}
+		return Result{Name: c.Name, Status: Unhealthy}
 	}
 	conn.Close()
 	return Result{
-		Name: c.Name,
-		Up:   true,
+		Name:   c.Name,
+		Status: Healthy,
 		Details: []Detail{
 			{Label: "応答時間", Value: latency.String()},
 		},
@@ -63,12 +63,17 @@ func (c HTTPChecker) Check() Result {
 	resp, err := client.Get(c.URL)
 	latency := time.Since(start)
 	if err != nil {
-		return Result{Name: c.Name, Up: false}
+		return Result{Name: c.Name, Status: Unhealthy}
 	}
 	defer resp.Body.Close()
 	return Result{
 		Name: c.Name,
-		Up:   resp.StatusCode < 500,
+		Status: func() Status {
+			if resp.StatusCode < 500 {
+				return Healthy
+			}
+			return Unhealthy
+		}(),
 		Details: []Detail{
 			{Label: "応答時間", Value: latency.String()},
 			{Label: "HTTPステータス", Value: http.StatusText(resp.StatusCode)},
