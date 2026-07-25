@@ -4,6 +4,7 @@ RUN apk add --no-cache go
 
 WORKDIR /app
 COPY go.mod ./
+COPY go.sum ./
 COPY cmd/ ./cmd/
 COPY internal/ ./internal/
 RUN CGO_ENABLED=0 go build -o watcher ./cmd/watcher
