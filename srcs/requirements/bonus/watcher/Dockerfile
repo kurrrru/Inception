@@ -24,6 +24,7 @@ RUN mkdir -p /etc/watcher/ssl && \
 
 COPY --from=builder /app/watcher /usr/local/bin/watcher
 COPY web/ /app/web/
+COPY config/watcher.yml /etc/watcher/watcher.yml
 WORKDIR /app
 
 CMD ["watcher"]

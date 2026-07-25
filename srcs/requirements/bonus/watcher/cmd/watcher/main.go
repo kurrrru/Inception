@@ -6,13 +6,48 @@ import (
 	"net/http"
 	"time"
 
+	"watcher/internal/config"
 	"watcher/internal/monitor"
+	"watcher/internal/probe"
 	"watcher/internal/server"
 )
 
 func main() {
+	cfg, err := config.Load("/etc/watcher/watcher.yml")
+	if err != nil {
+		log.Fatalf("failed to load config: %v", err)
+	}
+
+	interval := time.Duration(cfg.Monitor.Interval) * time.Second
+	targets := make([]monitor.Target, len(cfg.Targets))
+	for i, target := range cfg.Targets {
+		targets[i] = monitor.Target{
+			Name:     target.Name,
+			Checkers: make([]probe.Checker, len(target.Checkers)),
+		}
+		for j, checker := range target.Checkers {
+			if checker.Timeout == 0 {
+				checker.Timeout = cfg.Default.Targets.Timeout
+			}
+			switch checker.Type {
+			case "tcp":
+				targets[i].Checkers[j] = probe.TCPChecker{
+					Name:    targets[i].Name,
+					Addr:    checker.Address,
+					Timeout: time.Duration(checker.Timeout) * time.Second,
+				}
+			case "http":
+				targets[i].Checkers[j] = probe.HTTPChecker{
+					Name:    targets[i].Name,
+					URL:     checker.Address,
+					Timeout: time.Duration(checker.Timeout) * time.Second,
+				}
+			}
+		}
+	}
+
 	store := &monitor.Store{}
-	go monitor.Start(store, monitor.Targets, 5*time.Second)
+	go monitor.Start(store, targets, interval)
 
 	http.HandleFunc("/", server.IndexHandler(store))
 	http.HandleFunc("/api/status", server.StatusAPIHandler(store))

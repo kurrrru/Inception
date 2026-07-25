@@ -40,7 +40,7 @@ func (c TCPChecker) Check() Result {
 		Name:   c.Name,
 		Status: Healthy,
 		Details: []Detail{
-			{Label: "応答時間", Value: latency.String()},
+			{Label: "TCP応答時間", Value: latency.String()},
 		},
 	}
 }
@@ -75,7 +75,7 @@ func (c HTTPChecker) Check() Result {
 			return Unhealthy
 		}(),
 		Details: []Detail{
-			{Label: "応答時間", Value: latency.String()},
+			{Label: "HTTP応答時間", Value: latency.String()},
 			{Label: "HTTPステータス", Value: http.StatusText(resp.StatusCode)},
 		},
 	}
