@@ -44,9 +44,10 @@ func (t Target) Check() probe.Result {
 }
 
 type Store struct {
-	mu      sync.Mutex
-	results []probe.Result
-	history map[string]*history
+	mu           sync.Mutex
+	results      []probe.Result
+	history      map[string]*history
+	OnTransition func(name string, oldStatus, newStatus probe.Status)
 }
 
 func (s *Store) Set(results []probe.Result) {
@@ -103,25 +104,4 @@ func runOnce(store *Store, targets []Target) {
 	}
 	wg.Wait()
 	store.Set(results)
-}
-
-func (s *Store) Summaries() map[string]Summary {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	summaries := make(map[string]Summary)
-	for name, h := range s.history {
-		if h.count == 0 {
-			continue
-		}
-		avgLatency := make(map[string]time.Duration)
-		for kind, sum := range h.latencySum {
-			avgLatency[kind] = sum / time.Duration(h.count)
-		}
-		summaries[name] = Summary{
-			UptimePercent: float64(h.healthyCount) / float64(h.count) * 100,
-			AvgLatency:    avgLatency,
-			LastStatus:    h.lastStatus,
-		}
-	}
-	return summaries
 }
