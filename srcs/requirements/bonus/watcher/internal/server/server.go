@@ -28,3 +28,10 @@ func StatusAPIHandler(store *monitor.Store) http.HandlerFunc {
 		json.NewEncoder(w).Encode(store.Get())
 	}
 }
+
+func HealthCheckHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK) // 200 OK
+		w.Write([]byte("OK"))
+	}
+}

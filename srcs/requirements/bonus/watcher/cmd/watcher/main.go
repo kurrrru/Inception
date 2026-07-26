@@ -51,6 +51,7 @@ func main() {
 
 	http.HandleFunc("/", server.IndexHandler(store))
 	http.HandleFunc("/api/status", server.StatusAPIHandler(store))
+	http.HandleFunc("/health", server.HealthCheckHandler())
 
 	fs := http.FileServer(http.Dir("web/static"))
 	http.Handle("/static/", http.StripPrefix("/static/", fs))
