@@ -31,25 +31,48 @@ func severity(s probe.Status) int {
 func (t Target) Check() probe.Result {
 	overall := probe.Healthy
 	var details []probe.Detail
+	var rawValues []probe.RawValue
 	for _, c := range t.Checkers {
 		r := c.Check()
 		if severity(r.Status) > severity(overall) {
 			overall = r.Status
 		}
 		details = append(details, r.Details...)
+		rawValues = append(rawValues, r.RawValues...)
 	}
-	return probe.Result{Name: t.Name, Status: overall, Details: details}
+	return probe.Result{Name: t.Name, Status: overall, Details: details, RawValues: rawValues}
 }
 
 type Store struct {
 	mu      sync.Mutex
 	results []probe.Result
+	history map[string]*history
 }
 
 func (s *Store) Set(results []probe.Result) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.results = results
+	if s.history == nil {
+		s.history = make(map[string]*history)
+	}
+	for _, r := range results {
+		h, ok := s.history[r.Name]
+		if !ok {
+			h = &history{}
+			s.history[r.Name] = h
+			h.latencySum = make(map[string]time.Duration)
+		}
+		h.count++
+		if r.Status == probe.Healthy {
+			h.healthyCount++
+		}
+		for _, rv := range r.RawValues {
+			h.latencySum[rv.Kind] += rv.Latency
+		}
+		// あとで、ここにalertingのための処理を追加する
+		h.lastStatus = r.Status
+	}
 }
 
 func (s *Store) Get() []probe.Result {
@@ -80,4 +103,25 @@ func runOnce(store *Store, targets []Target) {
 	}
 	wg.Wait()
 	store.Set(results)
+}
+
+func (s *Store) Summaries() map[string]Summary {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	summaries := make(map[string]Summary)
+	for name, h := range s.history {
+		if h.count == 0 {
+			continue
+		}
+		avgLatency := make(map[string]time.Duration)
+		for kind, sum := range h.latencySum {
+			avgLatency[kind] = sum / time.Duration(h.count)
+		}
+		summaries[name] = Summary{
+			UptimePercent: float64(h.healthyCount) / float64(h.count) * 100,
+			AvgLatency:    avgLatency,
+			LastStatus:    h.lastStatus,
+		}
+	}
+	return summaries
 }

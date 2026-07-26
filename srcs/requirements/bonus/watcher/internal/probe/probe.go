@@ -7,15 +7,21 @@ import (
 	"time"
 )
 
+type RawValue struct {
+	Kind    string
+	Latency time.Duration
+}
+
 type Detail struct {
 	Label string
 	Value string
 }
 
 type Result struct {
-	Name    string
-	Status  Status
-	Details []Detail
+	Name      string
+	Status    Status
+	Details   []Detail
+	RawValues []RawValue
 }
 
 type Checker interface {
@@ -41,6 +47,9 @@ func (c TCPChecker) Check() Result {
 		Status: Healthy,
 		Details: []Detail{
 			{Label: "TCP応答時間", Value: latency.String()},
+		},
+		RawValues: []RawValue{
+			{Kind: "tcp", Latency: latency},
 		},
 	}
 }
@@ -77,6 +86,9 @@ func (c HTTPChecker) Check() Result {
 		Details: []Detail{
 			{Label: "HTTP応答時間", Value: latency.String()},
 			{Label: "HTTPステータス", Value: http.StatusText(resp.StatusCode)},
+		},
+		RawValues: []RawValue{
+			{Kind: "http", Latency: latency},
 		},
 	}
 }
