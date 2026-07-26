@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"html/template"
 	"net/http"
-	"time"
 
 	"watcher/internal/monitor"
 	"watcher/internal/probe"
@@ -15,7 +14,7 @@ type TargetView struct {
 	Status        probe.Status
 	Details       []probe.Detail
 	UptimePercent float64
-	AvgLatency    map[string]time.Duration
+	AvgLatency    map[string]string
 }
 
 type PageData struct {
@@ -32,12 +31,16 @@ func buildViews(store *monitor.Store) []TargetView {
 	views := make([]TargetView, len(results))
 	for i, r := range results {
 		s := summaries[r.Name]
+		avgLatency := make(map[string]string)
+		for kind, d := range s.AvgLatency {
+			avgLatency[kind] = d.String()
+		}
 		views[i] = TargetView{
 			Name:          r.Name,
 			Status:        r.Status,
 			Details:       r.Details,
 			UptimePercent: s.UptimePercent,
-			AvgLatency:    s.AvgLatency,
+			AvgLatency:    avgLatency,
 		}
 	}
 	return views
