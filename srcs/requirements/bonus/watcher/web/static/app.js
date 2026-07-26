@@ -1,6 +1,6 @@
 const STATUS_INFO = {
     healthy: { label: "正常に稼働中", cssClass: "healthy" },
-    unhealthy: { label: "異常あり", cssClass: "unhealthy" },
+    unhealthy: { label: "異常あり（・停止中）", cssClass: "unhealthy" },
     down: { label: "停止中", cssClass: "down" },
     unknown: { label: "不明", cssClass: "unknown" },
 };

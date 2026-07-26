@@ -14,7 +14,7 @@ func (s Status) Label() string {
 	case Healthy:
 		return "正常に稼働中"
 	case Unhealthy:
-		return "異常あり"
+		return "異常あり（・停止中）"
 	case Down:
 		return "停止中"
 	default:
