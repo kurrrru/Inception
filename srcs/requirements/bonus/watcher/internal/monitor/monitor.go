@@ -71,7 +71,9 @@ func (s *Store) Set(results []probe.Result) {
 		for _, rv := range r.RawValues {
 			h.latencySum[rv.Kind] += rv.Latency
 		}
-		// あとで、ここにalertingのための処理を追加する
+		if s.OnTransition != nil && h.lastStatus != r.Status {
+			s.OnTransition(r.Name, h.lastStatus, r.Status)
+		}
 		h.lastStatus = r.Status
 	}
 }

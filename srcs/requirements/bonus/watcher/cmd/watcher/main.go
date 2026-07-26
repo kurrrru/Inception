@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"watcher/internal/alert"
 	"watcher/internal/config"
 	"watcher/internal/monitor"
 	"watcher/internal/probe"
@@ -46,7 +47,11 @@ func main() {
 		}
 	}
 
-	store := &monitor.Store{}
+	store := &monitor.Store{
+		OnTransition: func(name string, oldStatus, newStatus probe.Status) {
+			alert.Notify(name, oldStatus, newStatus, cfg.Alert.Webhook)
+		},
+	}
 	go monitor.Start(store, targets, interval)
 
 	http.HandleFunc("/", server.IndexHandler(store))
