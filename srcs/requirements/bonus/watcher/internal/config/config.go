@@ -41,8 +41,8 @@ type AlertConfig struct {
 }
 
 type WebhookConfig struct {
-	Enabled bool   `yaml:"enabled"`
-	URL     string `yaml:"url"`
+	Enabled bool     `yaml:"enabled"`
+	URLs    []string `yaml:"urls"`
 }
 
 func Load(path string) (Config, error) {
