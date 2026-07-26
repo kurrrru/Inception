@@ -19,11 +19,19 @@ function renderCards(results) {
             .map(d => `<p class="detail">${d.Label}: ${d.Value}</p>`)
             .join("");
 
+        const avgLatency = Object.entries(result.AvgLatency || {})
+            .map(([kind, value]) => `<li>${kind}: ${value}</li>`)
+            .join("");
+
         card.innerHTML = `
             <h2>${result.Name}</h2>
             <p>${info.label}</p>
             ${details}
+            <p class="uptime">稼働率: ${result.UptimePercent}</p>
+            <p class="latency">平均応答時間:</p>
+            <ul class="latency-list">${avgLatency}</ul>
         `;
+
 
         grid.appendChild(card);
     }
