@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"net/http"
 
@@ -13,7 +14,7 @@ type TargetView struct {
 	Name          string
 	Status        probe.Status
 	Details       []probe.Detail
-	UptimePercent float64
+	UptimePercent string
 	AvgLatency    map[string]string
 }
 
@@ -39,7 +40,7 @@ func buildViews(store *monitor.Store) []TargetView {
 			Name:          r.Name,
 			Status:        r.Status,
 			Details:       r.Details,
-			UptimePercent: s.UptimePercent,
+			UptimePercent: fmt.Sprintf("%.2f%%", s.UptimePercent),
 			AvgLatency:    avgLatency,
 		}
 	}
