@@ -49,7 +49,7 @@ func (c TCPChecker) Check() Result {
 			{Label: "TCP応答時間", Value: latency.String()},
 		},
 		RawValues: []RawValue{
-			{Kind: "tcp", Latency: latency},
+			{Kind: "TCP", Latency: latency},
 		},
 	}
 }
@@ -88,7 +88,7 @@ func (c HTTPChecker) Check() Result {
 			{Label: "HTTPステータス", Value: http.StatusText(resp.StatusCode)},
 		},
 		RawValues: []RawValue{
-			{Kind: "http", Latency: latency},
+			{Kind: "HTTP", Latency: latency},
 		},
 	}
 }

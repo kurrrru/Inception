@@ -15,6 +15,13 @@
             {{range .Details}}
             <p class="detail">{{.Label}}: {{.Value}}</p>
             {{end}}
+            <p class="uptime">稼働率: {{printf "%.2f" .UptimePercent}}%</p>
+            <p class="latency">平均応答時間:</p>
+            <ul class="latency-list">
+                {{range $key, $value := .AvgLatency}}
+                <li>{{$key}}: {{$value}}</li>
+                {{end}}
+            </ul>
         </div>
         {{end}}
     </div>
