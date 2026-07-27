@@ -12,6 +12,9 @@ services:
     ports:
       - "8443:8443"
       - "8081:8081"
+  wordpress:
+    secrets:
+      - redis_password
   redis:
     <<: *common
     build: ./requirements/bonus/redis
@@ -58,5 +61,7 @@ services:
       - "8082:8082"
 
 secrets:
+  redis_password:
+    file: ../secrets/redis_password.txt
   ftp_password:
     file: ../secrets/ftp_password.txt
