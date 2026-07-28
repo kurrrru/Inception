@@ -1,10 +1,12 @@
 FROM alpine:3.23 AS builder
 
+ARG EMSDK_VERSION=6.0.3
+
 RUN apk add --no-cache python3 git gcompat nodejs
 
-RUN git clone https://github.com/emscripten-core/emsdk.git && \
-    ./emsdk/emsdk install latest && \
-    ./emsdk/emsdk activate latest && \
+RUN git clone --depth 1 https://github.com/emscripten-core/emsdk.git && \
+    ./emsdk/emsdk install ${EMSDK_VERSION} && \
+    ./emsdk/emsdk activate ${EMSDK_VERSION} && \
     sed -i 's|NODE_JS = .*|NODE_JS = "/usr/bin/node"|' /emsdk/.emscripten
 
 COPY srcs/cpp/ /srcs/cpp/
