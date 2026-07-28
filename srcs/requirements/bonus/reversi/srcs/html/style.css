@@ -1,0 +1,258 @@
+:root {
+    --green-dark: #155b2c;
+    --green-light: #1f7a3d;
+    --grid-line: rgba(0, 0, 0, 0.35);
+    --highlight: rgba(255, 255, 0, 0.35);
+    --bg: #101418;
+    --panel-bg: rgba(255, 255, 255, 0.08);
+    --text: #f4f7f8;
+    --accent: #ffc145;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.page-header,
+.page-footer {
+    text-align: center;
+    padding: 1.5rem 1rem;
+}
+
+.page-header {
+    background: rgba(255, 255, 255, 0.04);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: clamp(1.8rem, 2vw + 1rem, 3rem);
+}
+
+.page-footer {
+    margin-top: auto;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    padding: 2rem 1rem 3rem;
+}
+
+.board-section {
+    flex: 1 1 320px;
+    display: flex;
+    justify-content: center;
+    align-items: center; /* 垂直方向も中央寄せにして Safari で上寄せになるのを防ぐ */
+}
+
+/* Wrapper that keeps the board square using the padding-top trick.
+   This is more robust across mobile browsers (including older Safari) than
+   relying only on aspect-ratio. */
+.board-wrapper {
+    width: min(90vw, 520px);
+    max-width: 520px;
+    /* maintain 1:1 ratio */
+    position: relative;
+    margin: 0 auto; /* 明示的に中央寄せ */
+}
+.board-wrapper::before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+}
+
+.board {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    background: var(--green-light);
+    border: 6px solid #0f3019;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+}
+
+.cell {
+    position: relative;
+    background: var(--green-dark);
+    border: 1px solid var(--grid-line);
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    outline: none;
+    color: transparent;
+}
+
+/* Ensure grid cells size properly and are big enough for touch targets */
+.board {
+    grid-auto-rows: 1fr;
+}
+.cell {
+    min-width: 0;
+    min-height: 0;
+}
+
+.cell:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: -1px;
+}
+
+.cell:hover {
+    transform: scale(1.03);
+}
+
+.cell.disabled,
+.board.disabled .cell {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+}
+
+.cell::after {
+    content: "";
+    width: 70%;
+    height: 70%;
+    border-radius: 50%;
+    box-shadow: inset 0 6px 12px rgba(0, 0, 0, 0.4);
+    transform: scale(0);
+    transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.cell.black::after {
+    background: radial-gradient(circle at 30% 30%, #4a4a4a, #050505 70%);
+    transform: scale(1);
+}
+
+.cell.white::after {
+    background: radial-gradient(circle at 30% 30%, #ffffff, #c6c6c6 70%);
+    transform: scale(1);
+}
+
+.cell.valid::before {
+    content: "";
+    position: absolute;
+    width: 35%;
+    height: 35%;
+    border-radius: 50%;
+    background: var(--highlight);
+    box-shadow: 0 0 10px rgba(255, 255, 0, 0.4);
+}
+
+.side-panel {
+    flex: 0 1 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: var(--panel-bg);
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(6px);
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.controls select,
+.controls button {
+    font-size: 1rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: 0.75rem;
+    border: none;
+}
+
+.controls select {
+    background: rgba(0, 0, 0, 0.25);
+    color: var(--text);
+}
+
+.controls button {
+    background: var(--accent);
+    color: #1c1c1c;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.controls button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.25);
+}
+
+.controls button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.scores {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.scores .label {
+    display: block;
+    font-size: 0.85rem;
+    opacity: 0.75;
+}
+
+.scores .value {
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.status {
+    min-height: 3rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: rgba(0, 0, 0, 0.25);
+    line-height: 1.4;
+}
+
+.notes {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.65);
+}
+
+.notes code {
+    background: rgba(0, 0, 0, 0.45);
+    padding: 0.15rem 0.35rem;
+    border-radius: 0.4rem;
+}
+
+@media (max-width: 768px) {
+    .side-panel {
+        flex: 1 1 100%;
+    }
+    .layout {
+        gap: 1.5rem;
+    }
+}

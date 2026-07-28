@@ -1,0 +1,67 @@
+x-common: &common
+  restart: always
+  init: true
+  networks:
+    - inception
+
+services:
+  nginx:
+    build:
+      args:
+        NGINX_CONF: nginx.bonus.conf
+    ports:
+      - "8443:8443"
+      - "8081:8081"
+  wordpress:
+    secrets:
+      - redis_password
+  redis:
+    <<: *common
+    build: ./requirements/bonus/redis
+    image: redis:inception
+    container_name: redis
+    secrets:
+      - redis_password
+  adminer:
+    <<: *common
+    build: ./requirements/bonus/adminer
+    image: adminer:inception
+    container_name: adminer
+    depends_on:
+      - mariadb
+  ftp-server:
+    <<: *common
+    build:
+      context: ./requirements/bonus/ftp-server
+      args:
+        DOMAIN_NAME: ${DOMAIN_NAME}
+    image: ftp-server:inception
+    container_name: ftp-server
+    volumes:
+      - wordpress_vol:/var/www/html
+    ports:
+      - "21:21"
+      - "30000-30009:30000-30009"
+    secrets:
+      - ftp_password
+  reversi:
+    <<: *common
+    build: ./requirements/bonus/reversi
+    image: reversi:inception
+    container_name: reversi
+  watcher:
+    <<: *common
+    build:
+      context: ./requirements/bonus/watcher
+      args:
+        DOMAIN_NAME: ${DOMAIN_NAME}
+    image: watcher:inception
+    container_name: watcher
+    ports:
+      - "8082:8082"
+
+secrets:
+  redis_password:
+    file: ../secrets/redis_password.txt
+  ftp_password:
+    file: ../secrets/ftp_password.txt

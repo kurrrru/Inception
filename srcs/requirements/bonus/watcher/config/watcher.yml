@@ -1,0 +1,49 @@
+monitor:
+  interval_sec: 5
+
+default:
+  targets:
+    timeout_sec: 2
+
+targets:
+  - name: mariadb
+    checkers:
+      - type: tcp
+        address: mariadb:3306
+
+  - name: redis
+    checkers:
+      - type: tcp
+        address: redis:6379
+
+  - name: nginx
+    checkers:
+      - type: http
+        address: https://nginx/
+
+  - name: wordpress
+    checkers:
+      - type: tcp
+        address: wordpress:9000
+
+  - name: adminer
+    checkers:
+      - type: tcp
+        address: adminer:9000
+
+  - name: ftp-server
+    checkers:
+      - type: tcp
+        address: ftp-server:21
+
+  - name: reversi
+    checkers:
+      - type: http
+        address: http://reversi:8000/
+      - type: tcp
+        address: reversi:8000
+
+alert:
+  webhook:
+    enabled: false
+    urls: []

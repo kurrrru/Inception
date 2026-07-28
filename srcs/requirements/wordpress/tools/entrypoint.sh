@@ -52,5 +52,24 @@ else
     echo "[entrypoint] WordPress already present, skipping copy."
 fi
 
+if [ "${USE_REDIS}" = "1" ]; then
+    REDIS_PASSWORD=$(cat /run/secrets/redis_password)
+
+    until REDISCLI_AUTH="${REDIS_PASSWORD}" redis-cli -h redis ping >/dev/null 2>&1; do
+        echo "[entrypoint] Waiting for Redis..."
+        sleep 1
+    done
+    echo "[entrypoint] Redis is ready."
+
+    echo "[entrypoint] Configuring Redis object cache..."
+    wp plugin install redis-cache --activate --path=/var/www/html --allow-root
+    wp config set WP_REDIS_HOST "${WP_REDIS_HOST}" --path=/var/www/html --allow-root
+    # Default Redis port is 6379, so this line is commented out.
+    # wp config set WP_REDIS_PORT 6379 --path=/var/www/html --allow-root
+    wp config set WP_REDIS_PASSWORD "${REDIS_PASSWORD}" --path=/var/www/html --allow-root
+    wp redis enable --path=/var/www/html --allow-root
+    echo "[entrypoint] Redis object cache configured."
+fi
+
 echo "[entrypoint] Starting php-fpm (foreground)..."
 exec php-fpm83 -F

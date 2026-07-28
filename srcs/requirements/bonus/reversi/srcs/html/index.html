@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Reversi AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="page-header">
+        <h1>Reversi AI</h1>
+        <p>ブラウザで遊べる簡易版リバーシAI</p>
+    </header>
+    <main class="layout">
+        <section class="board-section">
+            <div class="board-wrapper">
+                <div id="board" class="board" aria-label="Reversi board"></div>
+            </div>
+        </section>
+        <section class="side-panel">
+            <div class="controls">
+                <label for="color-select">あなたの色</label>
+                <select id="color-select">
+                    <option value="0">黒 (先手)</option>
+                    <option value="1">白 (後手)</option>
+                </select>
+                <button id="new-game">新しい対局</button>
+                <button id="pass-button">パス</button>
+            </div>
+            <div class="scores">
+                <div><span class="label">黒</span><span id="score-black" class="value">2</span></div>
+                <div><span class="label">白</span><span id="score-white" class="value">2</span></div>
+            </div>
+            <div id="status" class="status" role="status">読み込み中...</div>
+            <!-- <div class="notes">
+                <p>※ 初回は <code>make wasm</code> で <code>reversi.js</code> / <code>reversi.wasm</code> を生成してください。</p>
+            </div> -->
+        </section>
+    </main>
+    <footer class="page-footer">
+        <small>&copy; 2025 Reversi AI</small>
+    </footer>
+    <script src="reversi.js"></script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>
