@@ -17,6 +17,12 @@ services:
       - db_root_password
     volumes:
       - mariadb_vol:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mariadb-admin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+      start_period: 5s
   wordpress:
     <<: *common
     build: ./requirements/wordpress
@@ -34,7 +40,8 @@ services:
     volumes:
       - wordpress_vol:/var/www/html
     depends_on:
-      - mariadb
+      mariadb:
+        condition: service_healthy
   nginx:
     <<: *common
     build:

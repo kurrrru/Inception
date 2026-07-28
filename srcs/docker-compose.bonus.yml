@@ -15,6 +15,9 @@ services:
   wordpress:
     secrets:
       - redis_password
+    depends_on:
+      redis:
+        condition: service_healthy
   redis:
     <<: *common
     build: ./requirements/bonus/redis
@@ -22,6 +25,12 @@ services:
     container_name: redis
     secrets:
       - redis_password
+    healthcheck:
+      test: ["CMD-SHELL", "REDISCLI_AUTH=$(cat /run/secrets/redis_password) redis-cli ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 2s
   adminer:
     <<: *common
     build: ./requirements/bonus/adminer

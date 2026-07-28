@@ -3,13 +3,6 @@ set -e
 
 DB_PASSWORD=$(cat /run/secrets/db_password)
 
-until mariadb-admin -h "${WORDPRESS_DB_HOST}" -u "${MYSQL_USER}" -p"${DB_PASSWORD}" ping >/dev/null 2>&1; do
-    echo "[entrypoint] Waiting for MariaDB..."
-    sleep 1
-done
-
-echo "[entrypoint] MariaDB is ready."
-
 if [ ! -f /var/www/html/wp-load.php ]; then
     echo "[entrypoint] First run: copying WordPress core to /var/www/html..."
     cp -a /usr/src/wordpress/. /var/www/html/
@@ -54,12 +47,6 @@ fi
 
 if [ "${USE_REDIS}" = "1" ]; then
     REDIS_PASSWORD=$(cat /run/secrets/redis_password)
-
-    until REDISCLI_AUTH="${REDIS_PASSWORD}" redis-cli -h redis ping >/dev/null 2>&1; do
-        echo "[entrypoint] Waiting for Redis..."
-        sleep 1
-    done
-    echo "[entrypoint] Redis is ready."
 
     echo "[entrypoint] Configuring Redis object cache..."
     wp plugin install redis-cache --activate --path=/var/www/html --allow-root
