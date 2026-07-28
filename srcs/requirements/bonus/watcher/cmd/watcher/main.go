@@ -4,6 +4,8 @@ import (
 	"crypto/tls"
 	"log"
 	"net/http"
+	"os"
+	"strings"
 	"time"
 
 	"watcher/internal/alert"
@@ -54,8 +56,24 @@ func main() {
 	}
 	go monitor.Start(store, targets, interval)
 
-	http.HandleFunc("/", server.IndexHandler(store))
-	http.HandleFunc("/api/status", server.StatusAPIHandler(store))
+	var authPassword string
+	if cfg.Auth.Enabled {
+		b, err := os.ReadFile("/run/secrets/watcher_password")
+		if err != nil {
+			log.Fatalf("failed to read watcher password: %v", err)
+		}
+		authPassword = strings.TrimSpace(string(b))
+	}
+
+	protect := func(h http.HandlerFunc) http.HandlerFunc {
+		if !cfg.Auth.Enabled {
+			return h
+		}
+		return server.BasicAuth(cfg.Auth.Username, authPassword, h)
+	}
+
+	http.HandleFunc("/", protect(server.IndexHandler(store)))
+	http.HandleFunc("/api/status", protect(server.StatusAPIHandler(store)))
 	http.HandleFunc("/health", server.HealthCheckHandler())
 
 	fs := http.FileServer(http.Dir("web/static"))

@@ -47,3 +47,7 @@ alert:
   webhook:
     enabled: false
     urls: []
+
+auth:
+  enabled: true
+  username: watcher

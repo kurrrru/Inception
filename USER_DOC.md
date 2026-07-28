@@ -53,6 +53,16 @@ Passwords are stored as plain files under the `secrets/` directory of the reposi
 | `secrets/wp_admin_password.txt` | Password of the WordPress administrator account |
 | `secrets/wp_user_password.txt` | Password of the regular WordPress user |
 
+When the bonus services are started as well with `make bonus`, the following three files are needed too.
+
+| File | Purpose |
+|---|---|
+| `secrets/redis_password.txt` | Connection password for Redis |
+| `secrets/ftp_password.txt` | Password of the FTP user (`ftp_user`) |
+| `secrets/watcher_password.txt` | Password used to view the Watcher dashboard |
+
+**Note**: `secrets/watcher_password.txt` is required even when Watcher's authentication is turned off (`auth.enabled: false` in `config/watcher.yml`). Docker Compose mounts the secret regardless of what the configuration says, so if the file does not exist the container cannot even be created.
+
 Non-confidential values such as the administrator's user name are written in `srcs/.env`.
 
 ## Verifying That Services Are Running Correctly
@@ -105,7 +115,14 @@ The files of the WordPress site can be accessed over FTP/FTPS.
 
 ### Watcher
 
-Opening `https://<login>.42.fr:8082/` shows a list of the liveness, uptime ratio and average response time of each service (refreshed automatically every 5 seconds). No authentication is in place, so anyone can view it.
+Opening `https://<login>.42.fr:8082/` shows a list of the liveness, uptime ratio and average response time of each service (refreshed automatically every 5 seconds).
 
-- `/api/status`: an API returning the same content in JSON
-- `/health`: an endpoint for checking the liveness of Watcher itself
+Viewing it requires Basic authentication; the browser presents a login dialog on access.
+
+| Field | Value |
+|---|---|
+| Username | `auth.username` in `config/watcher.yml` (`watcher` by default) |
+| Password | the contents of `secrets/watcher_password.txt` |
+
+- `/api/status`: an API returning the same content in JSON (Basic authentication required as well)
+- `/health`: an endpoint for checking the liveness of Watcher itself (left outside authentication so that external monitoring tools can reach it)

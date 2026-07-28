@@ -32,6 +32,14 @@ WP_USER_EMAIL=<一般ユーザのユーザー名>
 - `secrets/wp_admin_password.txt`: WordPressサイトの管理者アカウントのパスワード
 - `secrets/wp_user_password.txt`: WordPressサイトの一般ユーザーのパスワード
 
+ボーナスサービスを起動する場合(`make bonus`)は、以下も必要になる。
+
+- `secrets/redis_password.txt`: Redisの`requirepass`に設定するパスワード
+- `secrets/ftp_password.txt`: FTPユーザー`ftp_user`のパスワード
+- `secrets/watcher_password.txt`: WatcherのBasic認証のパスワード
+
+**注意**: これらは、対応する機能を使わない設定にしていてもファイル自体は存在している必要がある。Docker Composeはサービス定義に書かれたsecretを設定内容と無関係にマウントするため、ファイルが無いと`bind source path does not exist`でコンテナの作成に失敗する。特に`secrets/watcher_password.txt`は、`config/watcher.yml`で`auth.enabled: false`にしている場合でも必要になる。
+
 ## ビルドと起動(Makefile & Docker Compose)
 
 ```bash
@@ -113,4 +121,6 @@ mandatoryのnginxコンテナのビルド引数(`NGINX_CONF`)を切り替える�
 - 死活判定はTCP接続確認またはHTTP GETによるネットワークプローブのみで行い、Docker APIへの`docker.sock`経由アクセスは採用していない(理由はREADMEの「ボーナス」セクション参照)
 - 各対象の稼働率(累積%)・Checkerの種類ごとの平均応答時間を集計して表示する
 - ステータスが変化した際、Discord Webhookへ通知する(`config/watcher.yml`の`alert.webhook`で有効化・通知先URLを設定)
-- 認証機能は未実装(bonusの「任意サービス」枠として、他の実装(config駆動・稼働率集計・アラート通知)を優先したため)
+- ダッシュボード(`/`)とJSON API(`/api/status`)はBasic認証で保護している。有効化とユーザー名は`config/watcher.yml`の`auth`セクションで設定し、パスワードは起動時に`/run/secrets/watcher_password`から読み込む
+- 資格情報の比較は、`crypto/sha256`で固定長にしてから`crypto/subtle.ConstantTimeCompare`で行う(比較対象の長さが漏れることと、比較にかかる時間から内容を推測されることの両方を避けるため)。ユーザー名とパスワードの判定を`&&`の短絡評価に任せず、両方を必ず評価してから結合している
+- `/health`は認証の対象外(死活確認用エンドポイントとして、外部の監視ツールから無認証で叩けるようにするため)

@@ -32,6 +32,14 @@ The following passwords have to be set:
 - `secrets/wp_admin_password.txt`: password of the administrator account of the WordPress site
 - `secrets/wp_user_password.txt`: password of the regular user of the WordPress site
 
+When the bonus services are started (`make bonus`), the following are needed as well:
+
+- `secrets/redis_password.txt`: the password set as Redis's `requirepass`
+- `secrets/ftp_password.txt`: password of the FTP user `ftp_user`
+- `secrets/watcher_password.txt`: password for Watcher's Basic authentication
+
+**Note**: these files have to exist even when the corresponding feature is configured to be off. Docker Compose mounts the secrets declared in a service definition regardless of what the configuration says, so a missing file makes container creation fail with `bind source path does not exist`. In particular, `secrets/watcher_password.txt` is required even when `auth.enabled: false` is set in `config/watcher.yml`.
+
 ## Building and Launching the Project (Makefile & Docker Compose)
 
 ```bash
@@ -113,4 +121,6 @@ Switching the `NGINX_CONF` build argument of the core nginx container makes it l
 - Liveness is determined solely by network probing — a TCP connection check or an HTTP GET. Access to the Docker API through `docker.sock` is not used (see the "Bonus" section of the README for the reasoning)
 - The uptime ratio (cumulative %) of each target and the average response time per checker type are aggregated and displayed
 - When a status changes, a notification is sent to a Discord Webhook (enabled, together with the destination URL, in `alert.webhook` of `config/watcher.yml`)
-- Authentication is not implemented (as the "service of choice" of the bonus part, the other work — configuration-driven targets, uptime aggregation and alert notification — was prioritized instead)
+- The dashboard (`/`) and the JSON API (`/api/status`) are protected with Basic authentication. It is enabled, and the user name is set, in the `auth` section of `config/watcher.yml`; the password is read at startup from `/run/secrets/watcher_password`
+- Credentials are compared by first reducing them to a fixed length with `crypto/sha256` and then using `crypto/subtle.ConstantTimeCompare`, which avoids both leaking the length of the compared values and allowing their content to be inferred from how long the comparison takes. The user name and the password checks are not left to the short-circuiting of `&&`: both are always evaluated before being combined
+- `/health` is left outside authentication, so that external monitoring tools can reach the liveness endpoint without credentials

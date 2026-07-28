@@ -53,6 +53,16 @@ make hosts
 | `secrets/wp_admin_password.txt` | WordPress管理者アカウントのパスワード |
 | `secrets/wp_user_password.txt` | WordPress一般ユーザーのパスワード |
 
+`make bonus`でボーナスサービスも起動する場合は、以下の3ファイルも必要になる。
+
+| ファイル | 用途 |
+|---|---|
+| `secrets/redis_password.txt` | Redisの接続パスワード |
+| `secrets/ftp_password.txt` | FTPユーザー(`ftp_user`)のパスワード |
+| `secrets/watcher_password.txt` | Watcherのダッシュボードを閲覧するためのパスワード |
+
+**注意**: `secrets/watcher_password.txt`は、Watcherの認証を無効(`config/watcher.yml`で`auth.enabled: false`)にしている場合でも必要になる。Docker Composeは設定の内容に関わらずsecretをマウントするため、ファイルが存在しないとコンテナの作成自体が失敗する。
+
 管理者ユーザー名等の非機密情報は`srcs/.env`に記載する。
 
 ## サービスが正しく動作しているかの確認方法
@@ -105,7 +115,14 @@ WordPressサイトのファイルへFTP/FTPSでアクセスできる。
 
 ### Watcher
 
-`https://<login>.42.fr:8082/` にアクセスすると、各サービスの死活状態・稼働率・平均応答時間が一覧表示される(5秒間隔で自動更新)。認証は設けていないため、誰でも閲覧できる。
+`https://<login>.42.fr:8082/` にアクセスすると、各サービスの死活状態・稼働率・平均応答時間が一覧表示される(5秒間隔で自動更新)。
 
-- `/api/status`: 同内容をJSON形式で取得できるAPI
-- `/health`: watcher自身の死活確認用エンドポイント
+閲覧にはBasic認証が必要で、アクセスするとブラウザがログインダイアログを表示する。
+
+| 項目 | 値 |
+|---|---|
+| ユーザー名 | `config/watcher.yml`の`auth.username`(既定は`watcher`) |
+| パスワード | `secrets/watcher_password.txt` の中身 |
+
+- `/api/status`: 同内容をJSON形式で取得できるAPI(こちらもBasic認証が必要)
+- `/health`: watcher自身の死活確認用エンドポイント(外部の監視ツールから叩けるよう、認証の対象外)
