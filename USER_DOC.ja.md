@@ -64,3 +64,48 @@ curl -k https://<login>.42.fr/ -o /dev/null -s -w "%{http_code}\n"   # 200 が�
 ```
 
 ## ボーナスサービス
+
+### Redis
+
+WordPressのキャッシュとして裏側で動作する。ユーザーが直接操作する画面は無い。動作確認は次のコマンドで行う。
+
+```bash
+docker exec wordpress wp redis status --path=/var/www/html --allow-root
+```
+
+`Status: Connected`と表示されれば正常。
+
+### Adminer
+
+`https://<login>.42.fr:8443/` にアクセスするとログイン画面が表示される。
+
+| 項目 | 値 |
+|---|---|
+| System | MySQL |
+| Server | mariadb |
+| Username | wp_user |
+| Password | `secrets/db_password.txt` の中身 |
+| Database | wordpress |
+
+### reversi
+
+`https://<login>.42.fr:8081/` にアクセスすると、自作のリバーシAIとブラウザ上で対局できる。ログイン等は不要。
+
+### FTP Server
+
+WordPressサイトのファイルへFTP/FTPSでアクセスできる。
+
+| 項目 | 値 |
+|---|---|
+| ホスト | `<login>.42.fr` |
+| ポート | 21(パッシブポート範囲: 30000-30009) |
+| ユーザー名 | ftp_user |
+| パスワード | `secrets/ftp_password.txt` の中身 |
+| 接続方式 | FTPS(明示的なAUTH TLS) |
+
+### Watcher
+
+`https://<login>.42.fr:8082/` にアクセスすると、各サービスの死活状態・稼働率・平均応答時間が一覧表示される(5秒間隔で自動更新)。認証は設けていないため、誰でも閲覧できる。
+
+- `/api/status`: 同内容をJSON形式で取得できるAPI
+- `/health`: watcher自身の死活確認用エンドポイント
