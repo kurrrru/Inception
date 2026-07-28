@@ -130,6 +130,6 @@ Open `https://<login>.42.fr` in a browser inside the VM.
 - Go html/template — https://pkg.go.dev/html/template
 - Docker Compose: multiple compose files merge — https://docs.docker.com/compose/how-tos/multiple-compose-files/merge/
 
-## Use of AI
+### Use of AI
 
 AI was used to discuss implementation approaches, to help find candidate official documentation, and to help identify the cause of unexpected behaviour. Every piece of official documentation AI pointed to was read directly and checked, rather than taking AI's interpretation at face value. Generated commands and configuration were likewise all verified and understood before being adopted.
