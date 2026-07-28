@@ -2,7 +2,7 @@
 
 ## 前提条件
 
-- Docker Engine + Docker Compose plugin
+- Docker Engine + Docker Compose plugin(v2。`depends_on`の`condition: service_healthy`がv2の機能のため)
 - sudo権限を使えるLinux OS
 
 ## 設定ファイルとSecrets
@@ -20,7 +20,8 @@ WORDPRESS_DB_USER=wp_user
 WP_ADMIN_USER=<管理者のユーザー名>
 WP_ADMIN_EMAIL=<管理者のメールアドレス>
 WP_USER=<一般ユーザのユーザー名>
-WP_USER_EMAIL=<一般ユーザのユーザー名>
+WP_USER_EMAIL=<一般ユーザのメールアドレス>
+WP_REDIS_HOST=redis
 ```
 `DOMAIN_NAME`と`DATA_PATH`はMakefileが`whoami`から自動算出するため、`.env`には書かない。
 
@@ -43,10 +44,15 @@ WP_USER_EMAIL=<一般ユーザのユーザー名>
 ## ビルドと起動(Makefile & Docker Compose)
 
 ```bash
-make          # create_data_dir → build → up(mandatoryのみ起動)
-make clean    # コンテナ・イメージ・ボリューム定義を削除
-make fclean   # clean + ホスト上の実データ(/home/<login>/data)も削除
-make re       # fclean + all
+make              # create_data_dir → build → up → hosts(mandatoryのみ起動)
+make bonus        # create_data_dir → build → up → hosts(mandatory + bonus)
+make build        # mandatoryのイメージのビルドのみ
+make build_bonus  # mandatory + bonusのイメージのビルドのみ
+make down         # コンテナを停止(mandatory + bonus)
+make hosts        # /etc/hostsにドメインを追記(make / make bonus が自動で実行する)
+make clean        # コンテナ・イメージ・ボリューム定義を削除
+make fclean       # clean + ホスト上の実データ(/home/<login>/data)も削除
+make re           # fclean + all
 ```
 
 内部的には `Makefile` が `LOGIN`/`DATA_PATH`/`DOMAIN_NAME` を算出して`export`し、`docker compose -f srcs/docker-compose.yml build/up` を呼び出している。
@@ -58,6 +64,19 @@ docker compose -f srcs/docker-compose.yml ps        # 稼働状況
 docker exec -it wordpress sh                        # コンテナに入る
 docker exec wordpress wp user list --path=/var/www/html --allow-root   # WordPressユーザー一覧
 docker volume ls                                     # ボリューム一覧
+```
+
+## 起動順序と初期化
+
+- MariaDBは初期化SQLを`/run/mysqld/init.sql`(所有者`mysql`、パーミッション600)に書き出し、`mariadbd --init-file`に渡している。サーバーはこれを**接続を受け付ける前に**実行する。各文は`IF NOT EXISTS`または同じ値の再設定で構成された冪等なものなので、再起動しても安全。
+- MariaDBとRedisはそれぞれ`healthcheck`を宣言し、WordPress側は両方に対して`depends_on: { condition: service_healthy }`を宣言している。entrypointスクリプトの中でループして待つ処理は無く、各コンテナのPID1はサービス本体のプロセスそのものになっている。
+- Redisのhealthcheckが`grep -q PONG`を挟んでいるのは意図的。`redis-cli ping`はサーバーが`NOAUTH`や`WRONGPASS`を返した場合でも終了コード0になるため、これが無いと「認証が通ること」を確認しないままhealthyと判定されてしまう。
+- **init-file内の文が失敗してもサーバーは止まらない**。MariaDBはエラーをログに書き、そのファイルの残りの文をスキップした上で、接続の受け付けまで進む。したがって初期化の失敗は`docker logs mariadb`で見つける必要があり、コンテナのクラッシュとしては現れない。
+
+healthの状態を確認するには:
+
+```bash
+docker inspect --format '{{.State.Health.Status}}' mariadb redis
 ```
 
 ## データの保存場所と永続化
@@ -97,12 +116,14 @@ mandatoryのnginxコンテナのビルド引数(`NGINX_CONF`)を切り替える�
 
 - 配置: `srcs/requirements/bonus/adminer/`(php-fpmのみ、Webサーバーは内蔵しない)
 - nginxから`fastcgi_pass adminer:9000`で転送。単一PHPファイルのため`try_files`は不要
+- 単一のPHPファイルは、Adminer公式が案内している常設URL(`https://www.adminer.org/latest-ja.php`)からビルド時に取得している。この"latest"はAdminer自身のリリースチャンネルを指すもので、Dockerで禁止されているイメージタグの`latest`とは無関係
 - secretsは使用しない(接続情報はブラウザで都度入力する設計)
 
 ### reversi
 
 - 配置: `srcs/requirements/bonus/reversi/`
 - マルチステージビルド: builderステージでAlpine上にemsdkを自前でインストールし、C++ソースをWebAssemblyへコンパイル。最終ステージには生成された`.wasm`/`.js`と静的ファイルのみを配置
+- emsdkのバージョンは`ARG EMSDK_VERSION`で固定し、cloneは`--depth 1`で行っている(全履歴を取得せずに再現性を保つため)
 - 配信は`python3 -m http.server`。外部公開はnginxの`proxy_pass http://reversi:8000;`経由
 
 ### FTP Server

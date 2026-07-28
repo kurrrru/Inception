@@ -32,6 +32,7 @@ Each service keeps its own Dockerfile and configuration files (nginx.conf, entry
 - **Container lifetime = service lifetime**: no keep-alive tricks (dummy processes and the like) are used to hold a container open. A container is designed to live exactly as long as the service process it exists for.
 - **Minimal exposure**: nothing is made reachable from the outside while it is not yet fully prepared.
 - **No hardcoded values**: values specific to an environment or a user are derived at build time or at run time rather than being written into the sources.
+- **Startup order guaranteed by health checks**: rather than having a container wait in a loop inside its entrypoint, readiness is expressed with `healthcheck` and consumed through `depends_on: condition: service_healthy`. MariaDB applies its initialization SQL through `--init-file`, which the server executes before it accepts any connection, so a MariaDB that reports healthy already has its database and its user in place.
 
 ### Comparisons
 

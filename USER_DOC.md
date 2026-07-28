@@ -29,14 +29,13 @@ make fclean
 
 ## Accessing the Website and the Administration Panel
 
-Only the first time, name resolution has to be made available to the browser.
+`make` and `make bonus` already append `127.0.0.1 <login>.42.fr` to `/etc/hosts` themselves, so that the browser can resolve the name — this is what the sudo password prompt during startup is for. The target only has to be run on its own if that entry needs to be restored later:
 
 ```bash
 make hosts
 ```
-This appends `127.0.0.1 <login>.42.fr` to `/etc/hosts` (sudo is required).
 
-After that, open the following in a browser:
+Open the following in a browser:
 - The site itself: `https://<login>.42.fr`
 - The administration panel: `https://<login>.42.fr/wp-admin`
 

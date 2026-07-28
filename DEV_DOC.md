@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Docker Engine + Docker Compose plugin
+- Docker Engine + Docker Compose plugin (v2 — `depends_on` with `condition: service_healthy` requires it)
 - A Linux OS on which sudo can be used
 
 ## Configuration Files and Secrets
@@ -21,6 +21,7 @@ WP_ADMIN_USER=<user name of the administrator>
 WP_ADMIN_EMAIL=<email address of the administrator>
 WP_USER=<user name of the regular user>
 WP_USER_EMAIL=<email address of the regular user>
+WP_REDIS_HOST=redis
 ```
 `DOMAIN_NAME` and `DATA_PATH` are derived automatically by the Makefile from `whoami`, so they are not written in `.env`.
 
@@ -43,10 +44,15 @@ When the bonus services are started (`make bonus`), the following are needed as 
 ## Building and Launching the Project (Makefile & Docker Compose)
 
 ```bash
-make          # create_data_dir → build → up (starts the core stack only)
-make clean    # remove containers, images and volume definitions
-make fclean   # clean + also remove the real data on the host (/home/<login>/data)
-make re       # fclean + all
+make              # create_data_dir → build → up → hosts (starts the core stack only)
+make bonus        # create_data_dir → build → up → hosts (core + bonus)
+make build        # build the core images only
+make build_bonus  # build the core + bonus images only
+make down         # stop the containers (core + bonus)
+make hosts        # append the domain to /etc/hosts (already done by make / make bonus)
+make clean        # remove containers, images and volume definitions
+make fclean       # clean + also remove the real data on the host (/home/<login>/data)
+make re           # fclean + all
 ```
 
 Internally the `Makefile` computes and `export`s `LOGIN` / `DATA_PATH` / `DOMAIN_NAME`, and then invokes `docker compose -f srcs/docker-compose.yml build/up`.
@@ -58,6 +64,19 @@ docker compose -f srcs/docker-compose.yml ps        # status
 docker exec -it wordpress sh                        # get a shell inside a container
 docker exec wordpress wp user list --path=/var/www/html --allow-root   # list WordPress users
 docker volume ls                                     # list volumes
+```
+
+## Startup Order and Initialization
+
+- MariaDB writes its initialization SQL to `/run/mysqld/init.sql` (owned by `mysql`, mode 600) and hands it to `mariadbd --init-file`. The server executes those statements before it accepts any connection, and every statement is idempotent (`IF NOT EXISTS`, or re-setting the same value), so restarting is safe.
+- MariaDB and Redis each declare a `healthcheck`, and WordPress declares `depends_on: { condition: service_healthy }` for both. No entrypoint script waits in a loop, and PID 1 of every container is the service process itself.
+- Redis's health check deliberately pipes through `grep -q PONG`. `redis-cli ping` exits 0 even when the server answers `NOAUTH` or `WRONGPASS`, so without that pipe the check would pass without ever proving that authentication works.
+- **A failing statement in the init file does not stop the server.** MariaDB writes the error to its log, skips the remaining statements in the file, and goes on to accept connections. A broken initialization therefore has to be found in `docker logs mariadb`; it does not announce itself as a container crash.
+
+To inspect the health state:
+
+```bash
+docker inspect --format '{{.State.Health.Status}}' mariadb redis
 ```
 
 ## Data Storage and Persistence
@@ -97,12 +116,14 @@ Switching the `NGINX_CONF` build argument of the core nginx container makes it l
 
 - Location: `srcs/requirements/bonus/adminer/` (php-fpm only, no web server bundled)
 - Forwarded from nginx with `fastcgi_pass adminer:9000`. `try_files` is unnecessary because the tool is a single PHP file
+- The single PHP file is fetched at build time from the permanent URL published by Adminer itself (`https://www.adminer.org/latest-ja.php`). The word "latest" here belongs to Adminer's own release channel and has nothing to do with Docker's forbidden `latest` image tag
 - No secrets are used (the connection details are typed into the browser each time by design)
 
 ### reversi
 
 - Location: `srcs/requirements/bonus/reversi/`
 - Multi-stage build: the builder stage installs emsdk by hand on Alpine and compiles the C++ sources to WebAssembly. The final stage contains only the generated `.wasm` / `.js` and the static files
+- The emsdk version is pinned through `ARG EMSDK_VERSION`, and the repository is cloned with `--depth 1`, so the build stays reproducible without pulling in the full history
 - Serving is done by `python3 -m http.server`. External publishing goes through nginx's `proxy_pass http://reversi:8000;`
 
 ### FTP Server
