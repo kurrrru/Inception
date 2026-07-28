@@ -1,6 +1,8 @@
 package server
 
 import (
+	"crypto/sha256"
+	"crypto/subtle"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -64,5 +66,26 @@ func HealthCheckHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK) // 200 OK
 		w.Write([]byte("OK"))
+	}
+}
+
+func BasicAuth(username, password string, next http.HandlerFunc) http.HandlerFunc {
+	expectedUser := sha256.Sum256([]byte(username))
+	expectedPass := sha256.Sum256([]byte(password))
+
+	return func(w http.ResponseWriter, r *http.Request) {
+		user, pass, ok := r.BasicAuth()
+		if ok {
+			gotUser := sha256.Sum256([]byte(user))
+			gotPass := sha256.Sum256([]byte(pass))
+			userMatch := subtle.ConstantTimeCompare(gotUser[:], expectedUser[:]) == 1
+			passMatch := subtle.ConstantTimeCompare(gotPass[:], expectedPass[:]) == 1
+			if userMatch && passMatch {
+				next(w, r)
+				return
+			}
+		}
+		w.Header().Set("WWW-Authenticate", `Basic realm="watcher", charset="UTF-8"`)
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	}
 }

@@ -59,9 +59,13 @@ services:
     container_name: watcher
     ports:
       - "8082:8082"
+    secrets:
+      - watcher_password
 
 secrets:
   redis_password:
     file: ../secrets/redis_password.txt
   ftp_password:
     file: ../secrets/ftp_password.txt
+  watcher_password:
+    file: ../secrets/watcher_password.txt

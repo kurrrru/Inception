@@ -11,6 +11,12 @@ type Config struct {
 	Default DefaultConfig  `yaml:"default"`
 	Targets []TargetConfig `yaml:"targets"`
 	Alert   AlertConfig    `yaml:"alert"`
+	Auth    AuthConfig     `yaml:"auth"`
+}
+
+type AuthConfig struct {
+	Enabled  bool   `yaml:"enabled"`
+	Username string `yaml:"username"`
 }
 
 type MonitorConfig struct {
