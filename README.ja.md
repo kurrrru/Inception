@@ -18,6 +18,7 @@ Inceptionは、Dockerを用いてWebインフラを構築し、システム管�
 - **WordPress**: PHP-FPMでWordPress本体を実行するコンテナ
 - **MariaDB**: WordPress用のデータベースを保持するコンテナ
 
+## プロジェクト概要
 
 ### Dockerの使い方と含まれるソース
 

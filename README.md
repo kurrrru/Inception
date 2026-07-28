@@ -19,6 +19,8 @@ Its core setup uses Docker Compose to connect three containers — nginx, WordPr
 - **WordPress**: a container that runs WordPress itself through PHP-FPM
 - **MariaDB**: a container that holds the database used by WordPress
 
+## Project description
+
 ### Docker Usage and Included Sources
 
 None of the services use a ready-made Docker image. Each one is built from a Dockerfile written by hand on top of `alpine:3.23`.
