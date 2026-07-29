@@ -18,7 +18,7 @@ func Notify(name string, oldStatus, newStatus probe.Status, webhook config.Webho
 	if !webhook.Enabled {
 		return
 	}
-	if oldStatus != probe.Healthy || newStatus == probe.Healthy {
+	if oldStatus == newStatus {
 		return
 	}
 
