@@ -1,6 +1,7 @@
 #include "Board.hpp"
 
 #include <stdexcept>
+#include <tuple>
 #include <vector>
 
 Board::Board() : _blackCount(2), _whiteCount(2) {
