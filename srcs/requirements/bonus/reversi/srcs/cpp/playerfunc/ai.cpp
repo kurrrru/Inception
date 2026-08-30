@@ -49,11 +49,9 @@ static int evaluate(const Board& board, Board::Player maximizing) {
     // 2. 終局判定 (両者打つ手がない)
     if (blackValidateNum == 0 && whiteValidateNum == 0) {
         // 終局時は「石の差」をスコアとする。
-        // ご指摘の通り、単なる WIN_SCORE では「最善の負け」を選べないため、
-        // 石の差をスコアに反映させる。
 
-        // 中盤の評価値が取りうる最大値（例: 隅4つと開放度で+5000点）よりも
-        // 終局スコアが「絶対に」大きくなるように重みを設定する。
+        // 中盤の評価値が取りうる最大値よりも
+        // 終局スコアが大きくなるように重みを設定する。
         const int ENDGAME_WEIGHT = 100000; // 10万点 (中盤スコアはこれを超えない前提)
 
         int black_stone_diff = black - white; // 黒基準の石差
@@ -169,7 +167,7 @@ static int evaluate(const Board& board, Board::Player maximizing) {
 
 
     // 6. 総合評価
-    // 各スコアの重み付け (この比率はAIの棋風を決め、調整が必要です)
+    // 各スコアの重み付け
     int POSITIONAL_WEIGHT;  // 盤面評価
     int MOBILITY_WEIGHT;    // 開放度
     int CORNER_WEIGHT;     // 隅のボーナス (WEIGHTSの120と合わせて約1000点)
