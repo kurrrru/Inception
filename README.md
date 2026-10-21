@@ -137,4 +137,10 @@ Open `https://<login>.42.fr` in a browser inside the VM.
 
 AI was used to discuss implementation approaches, to help find candidate official documentation, and to help identify the cause of unexpected behaviour. Every piece of official documentation AI pointed to was read directly and checked, rather than taking AI's interpretation at face value. Generated commands and configuration were likewise all verified and understood before being adopted.
 
-Note: The PHP containers are based on alpine:3.23, whose community repository (including php83) no longer receives security updates. Do not expose this stack to the public internet.
+## Security Notice
+
+This repository was created for educational purposes as part of the 42 curriculum and is **not maintained**. There are no plans to address security vulnerabilities, including those discovered in the future.
+
+Due to the project requirements, all images are built on the penultimate stable version of Alpine Linux (`alpine:3.23`). On this release, packages from the community repository, including PHP (`php83`), no longer receive security updates. As a result, the WordPress and Adminer containers run a PHP version with known unpatched vulnerabilities, including critical ones disclosed in October 2026.
+
+**Do not deploy this stack to the public internet or use it in production.** It is intended to be run only in an isolated local environment, such as a virtual machine, for learning and evaluation.
