@@ -136,3 +136,5 @@ Open `https://<login>.42.fr` in a browser inside the VM.
 ### Use of AI
 
 AI was used to discuss implementation approaches, to help find candidate official documentation, and to help identify the cause of unexpected behaviour. Every piece of official documentation AI pointed to was read directly and checked, rather than taking AI's interpretation at face value. Generated commands and configuration were likewise all verified and understood before being adopted.
+
+Note: The PHP containers are based on alpine:3.23, whose community repository (including php83) no longer receives security updates. Do not expose this stack to the public internet.
